@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,10 +48,10 @@ public class DansMaRueUploadHandler extends AbstractUploadHandler
 {
 
     /** The Constant DMR_UPLOAD_HANDLER. */
-    public static final String                              DMR_UPLOAD_HANDLER     = "DMRUploadHandler";
+    public static final String DMR_UPLOAD_HANDLER = "DMRUploadHandler";
 
     /** The Constant SESSION_DEMANDE_ID. */
-    public static final String                              SESSION_DEMANDE_ID     = "demandeSignalement";
+    public static final String SESSION_DEMANDE_ID = "demandeSignalement";
 
     /** The map asynchronous upload. */
     private static Map<String, Map<String, List<FileItem>>> _mapAsynchronousUpload = new ConcurrentHashMap<>( );

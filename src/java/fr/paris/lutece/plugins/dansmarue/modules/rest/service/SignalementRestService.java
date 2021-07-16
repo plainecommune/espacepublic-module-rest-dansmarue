@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -105,10 +105,12 @@ import fr.paris.lutece.plugins.dansmarue.service.output.SignalementOutputPrcesso
 import fr.paris.lutece.plugins.dansmarue.util.constants.SignalementConstants;
 import fr.paris.lutece.plugins.dansmarue.utils.DateUtils;
 import fr.paris.lutece.plugins.dansmarue.utils.ImgUtils;
-import fr.paris.lutece.plugins.identitystoreopenamprovider.service.IdentityStoreProviderService;
+import fr.paris.lutece.plugins.identitystore.v1.web.rs.dto.IdentityDto;
+import fr.paris.lutece.plugins.identitystore.v1.web.service.IdentityService;
+import fr.paris.lutece.plugins.identitystore.web.exception.IdentityNotFoundException;
+import fr.paris.lutece.plugins.identitystore.web.exception.IdentityStoreException;
 import fr.paris.lutece.plugins.leaflet.modules.dansmarue.entities.Address;
 import fr.paris.lutece.plugins.leaflet.modules.dansmarue.service.IAddressSuggestPOIService;
-import fr.paris.lutece.plugins.mylutece.modules.openam.service.OpenamService;
 import fr.paris.lutece.plugins.rest.service.formatters.IFormatter;
 import fr.paris.lutece.plugins.unittree.modules.dansmarue.business.sector.Sector;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
@@ -123,7 +125,6 @@ import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.datastore.DatastoreService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.image.ImageResource;
-import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -141,64 +142,64 @@ public class SignalementRestService implements ISignalementRestService
 {
 
     /** The Constant PARAMETER_NULL. */
-    private static final String       PARAMETER_NULL                       = "null";
+    private static final String PARAMETER_NULL = "null";
 
     /** The signalement service. */
     // SERVICES
     @Inject
-    private ISignalementService       _signalementService;
+    private ISignalementService _signalementService;
 
     /** The adresse service. */
     @Inject
-    private IAdresseService           _adresseService;
+    private IAdresseService _adresseService;
 
     /** The arrondissement service. */
     @Inject
-    private IArrondissementService    _arrondissementService;
+    private IArrondissementService _arrondissementService;
 
     /** The photo service. */
     @Inject
-    private IPhotoService             _photoService;
+    private IPhotoService _photoService;
 
     /** The signaleur service. */
     @Inject
-    private ISignaleurService         _signaleurService;
+    private ISignaleurService _signaleurService;
 
     /** The signalement workflow service. */
     @Inject
-    private IWorkflowService          _signalementWorkflowService;
+    private IWorkflowService _signalementWorkflowService;
 
     /** The observation rejet service. */
     @Inject
-    private IObservationRejetService  _observationRejetService;
+    private IObservationRejetService _observationRejetService;
 
     /** The type signalement service. */
     @Inject
-    private ITypeSignalementService   _typeSignalementService;
+    private ITypeSignalementService _typeSignalementService;
 
     /** The priorite service. */
     @Inject
-    private IPrioriteService          _prioriteService;
+    private IPrioriteService _prioriteService;
 
     /** The manage signalement service. */
     @Inject
-    private ManageSignalementService  _manageSignalementService;
+    private ManageSignalementService _manageSignalementService;
 
     /** The sira user service. */
     @Inject
-    private ISiraUserService          _siraUserService;
+    private ISiraUserService _siraUserService;
 
     /** The task service. */
     @Inject
-    private ITaskService              _taskService;
+    private ITaskService _taskService;
 
     /** The action service. */
     @Inject
-    private IActionService            _actionService;
+    private IActionService _actionService;
 
     /** The state service. */
     @Inject
-    private IStateService             _stateService;
+    private IStateService _stateService;
 
     /** The address suggest POI service. */
     @Inject
@@ -206,22 +207,22 @@ public class SignalementRestService implements ISignalementRestService
 
     /** The message typologie service. */
     @Inject
-    private IMessageTypologieService  _messageTypologieService;
+    private IMessageTypologieService _messageTypologieService;
 
     /** The Constant PARAMETER_WEBSERVICE_COMMENT_VALUE. */
-    private static final String       PARAMETER_WEBSERVICE_COMMENT_VALUE   = "webservice_comment_value";
+    private static final String PARAMETER_WEBSERVICE_COMMENT_VALUE = "webservice_comment_value";
 
     /** The Constant ID_STATE_ETAT_INITIAL. */
-    private static final String       ID_STATE_ETAT_INITIAL                = "signalement.idStateEtatInitial";
+    private static final String ID_STATE_ETAT_INITIAL = "signalement.idStateEtatInitial";
 
     /** The Constant PARAMETER_WEBSERVICE_CHOSEN_MESSAGE. */
-    private static final String       PARAMETER_WEBSERVICE_CHOSEN_MESSAGE  = "chosenMessage";
+    private static final String PARAMETER_WEBSERVICE_CHOSEN_MESSAGE = "chosenMessage";
 
     /** The Constant PARAMETER_WEBSERVICE_IS_MESSAGE_TYPO. */
-    private static final String       PARAMETER_WEBSERVICE_IS_MESSAGE_TYPO = "isMessageTypo";
+    private static final String PARAMETER_WEBSERVICE_IS_MESSAGE_TYPO = "isMessageTypo";
 
     /** The base 64. */
-    private static final String       BASE_64                              = ";base64,";
+    private static final String BASE_64 = ";base64,";
 
     /**
      * {@inheritDoc}
@@ -233,7 +234,7 @@ public class SignalementRestService implements ISignalementRestService
 
         try
         {
-            JSONArray jsonArray = ( JSONArray ) JSONSerializer.toJSON( strRequest );
+            JSONArray jsonArray = (JSONArray) JSONSerializer.toJSON( strRequest );
             JSONObject json = jsonArray.getJSONObject( 0 );
             String strRequestType = json.getString( SignalementRestConstants.JSON_TAG_REQUEST );
             AppLogService.debug( "module-signalement-rest processResquestAnswer" + strRequestType );
@@ -243,93 +244,114 @@ public class SignalementRestService implements ISignalementRestService
             {
                 strRespons = getIncidentStats( json, request );
             }
-            else if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_INCIDENTS_BY_ID ) )
-            {
-                strRespons = getIncidentsById( json );
-            }
-            else if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_INCIDENT_BY_POSITION ) )
-            {
-                strRespons = getIncidentsByPosition( json );
-            }
-            else if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_SAVE_INCIDENT ) )
-            {
-                strRespons = saveIncident( json );
-            }
-            else if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_REPORTS ) )
-            {
-                strRespons = getReports( json );
-            }
-            else if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_UPDATE_INCIDENT ) )
-            {
-                strRespons = updateIncident( json, request );
-            }
-            else if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_USER_ACTIVITIES ) )
-            {
-                strRespons = getUsersActivities( json );
-            }
-            else if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_CHANGE_INCIDENT ) )
-            {
-                strRespons = changeIncident( json );
-            }
-            else if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_INCIDENT_PHOTOS ) )
-            {
-                strRespons = getIncidentPhotos( json );
-            }
-            else if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_CATEGORIES_LIST ) )
-            {
-                strRespons = getCategoriesList( json );
-            }
-            else if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_CHANGE_STATUS ) )
-            {
-                strRespons = changeStatus( json, request );
-            }
-            else if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_ADD_ANOMALIE ) )
-            {
-                strRespons = addAnomalie( json );
-            }
-            else if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_CONGRATULATE_ANOMALIE ) )
-            {
-                strRespons = congratulateAnomalie( json );
-            }
-            else if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_INCIDENT_RESOLVED ) )
-            {
-                strRespons = setIncidentResolved( json, request );
-            }
-            else if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_FOLLOW ) )
-            {
-                strRespons = addFollower( json );
-            }
-            else if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_UNFOLLOW ) )
-            {
-                strRespons = removeFollower( json );
-            }
-            else if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_GET_INCIDENTS_BY_USER ) )
-            {
-                strRespons = getIncidentsByUser( json );
-            }
-            else if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_PROCESS_WORKFLOW ) )
-            {
-                strRespons = processWorkflow( json );
-            }
-            else if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_CHECK_VERSION ) )
-            {
-                strRespons = checkVersion( );
-            }
             else
-            {
-                ErrorSignalement error = new ErrorSignalement( );
-                error.setErrorCode( SignalementRestConstants.ERROR_BAD_JSON_REQUEST );
-                error.setErrorMessage( StringUtils.EMPTY );
+                if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_INCIDENTS_BY_ID ) )
+                {
+                    strRespons = getIncidentsById( json );
+                }
+                else
+                    if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_INCIDENT_BY_POSITION ) )
+                    {
+                        strRespons = getIncidentsByPosition( json );
+                    }
+                    else
+                        if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_SAVE_INCIDENT ) )
+                        {
+                            strRespons = saveIncident( json );
+                        }
+                        else
+                            if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_REPORTS ) )
+                            {
+                                strRespons = getReports( json );
+                            }
+                            else
+                                if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_UPDATE_INCIDENT ) )
+                                {
+                                    strRespons = updateIncident( json, request );
+                                }
+                                else
+                                    if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_USER_ACTIVITIES ) )
+                                    {
+                                        strRespons = getUsersActivities( json );
+                                    }
+                                    else
+                                        if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_CHANGE_INCIDENT ) )
+                                        {
+                                            strRespons = changeIncident( json );
+                                        }
+                                        else
+                                            if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_INCIDENT_PHOTOS ) )
+                                            {
+                                                strRespons = getIncidentPhotos( json );
+                                            }
+                                            else
+                                                if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_CATEGORIES_LIST ) )
+                                                {
+                                                    strRespons = getCategoriesList( json );
+                                                }
+                                                else
+                                                    if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_CHANGE_STATUS ) )
+                                                    {
+                                                        strRespons = changeStatus( json, request );
+                                                    }
+                                                    else
+                                                        if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_ADD_ANOMALIE ) )
+                                                        {
+                                                            strRespons = addAnomalie( json );
+                                                        }
+                                                        else
+                                                            if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_CONGRATULATE_ANOMALIE ) )
+                                                            {
+                                                                strRespons = congratulateAnomalie( json );
+                                                            }
+                                                            else
+                                                                if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_INCIDENT_RESOLVED ) )
+                                                                {
+                                                                    strRespons = setIncidentResolved( json, request );
+                                                                }
+                                                                else
+                                                                    if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_FOLLOW ) )
+                                                                    {
+                                                                        strRespons = addFollower( json );
+                                                                    }
+                                                                    else
+                                                                        if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_UNFOLLOW ) )
+                                                                        {
+                                                                            strRespons = removeFollower( json );
+                                                                        }
+                                                                        else
+                                                                            if ( strRequestType
+                                                                                    .equals( SignalementRestConstants.REQUEST_TYPE_GET_INCIDENTS_BY_USER ) )
+                                                                            {
+                                                                                strRespons = getIncidentsByUser( json );
+                                                                            }
+                                                                            else
+                                                                                if ( strRequestType
+                                                                                        .equals( SignalementRestConstants.REQUEST_TYPE_PROCESS_WORKFLOW ) )
+                                                                                {
+                                                                                    strRespons = processWorkflow( json );
+                                                                                }
+                                                                                else
+                                                                                    if ( strRequestType
+                                                                                            .equals( SignalementRestConstants.REQUEST_TYPE_CHECK_VERSION ) )
+                                                                                    {
+                                                                                        strRespons = checkVersion( );
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        ErrorSignalement error = new ErrorSignalement( );
+                                                                                        error.setErrorCode( SignalementRestConstants.ERROR_BAD_JSON_REQUEST );
+                                                                                        error.setErrorMessage( StringUtils.EMPTY );
 
-                return formatterJson.format( error );
-            }
+                                                                                        return formatterJson.format( error );
+                                                                                    }
 
             JSONArray jsonArrayRespons = new JSONArray( );
             jsonArrayRespons.element( strRespons );
 
             return jsonArrayRespons.toString( );
         }
-        catch ( JSONException e )
+        catch( JSONException e )
         {
             AppLogService.info( request.getHeader( "host" ) );
             AppLogService.info( request.getHeader( "user-agent" ) );
@@ -377,8 +399,8 @@ public class SignalementRestService implements ISignalementRestService
 
         json.accumulate( SignalementRestConstants.JSON_TAG_STATUS, 0 );
 
-        List<Signalement> listSignalement = _signalementService.findAllSignalementInPerimeterWithInfo( Double.parseDouble( strLatitude ), Double.parseDouble( strLongitude ),
-                Integer.valueOf( strRadius ) );
+        List<Signalement> listSignalement = _signalementService.findAllSignalementInPerimeterWithInfo( Double.parseDouble( strLatitude ),
+                Double.parseDouble( strLongitude ), Integer.valueOf( strRadius ) );
 
         AppLogService.info( "module-signalement-rest getIncidentStats" );
         int nOnGoingIncidents = 0;
@@ -395,56 +417,7 @@ public class SignalementRestService implements ISignalementRestService
 
             if ( workflowId != null )
             {
-                for ( Signalement signalement : listSignalement )
-                {
-                    State state = workflowService.getState( signalement.getId( ).intValue( ), Signalement.WORKFLOW_RESOURCE_TYPE, workflowId, null );
-
-                    int nStateId = state.getId( );
-
-                    switch ( nStateId )
-                    {
-                        case 7:
-                            nOnGoingIncidents++;
-
-                            break;
-
-                        case 8:
-                            nUpdatedIncidents++;
-
-                            break;
-
-                        case 9:
-                            nUpdatedIncidents++;
-
-                            break;
-
-                        case 10:
-                            nResolvedIncidents++;
-
-                            break;
-
-                        case 11:
-                            break;
-
-                        case 12:
-                            nResolvedIncidents++;
-
-                            break;
-
-                        case 13:
-                            nOnGoingIncidents++;
-
-                            break;
-
-                        case 22:
-                            nResolvedIncidents++;
-
-                            break;
-
-                        default:
-                            break;
-                    }
-                }
+                classifiedByState( listSignalement, listSignalement, listSignalement, workflowService, workflowId, listSignalement );
             }
         }
 
@@ -455,6 +428,58 @@ public class SignalementRestService implements ISignalementRestService
         jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, json );
 
         return jsonAnswer.toString( );
+    }
+
+    private void classifiedByState( List<Signalement> listDeclaredIncidents, List<Signalement> listResolvedIncidents, List<Signalement> listUpdatedIncidents,
+            WorkflowService workflowService, Integer workflowId, List<Signalement> listSignalement )
+    {
+
+        for ( Signalement signalement : listSignalement )
+        {
+            State state = workflowService.getState( signalement.getId( ).intValue( ), Signalement.WORKFLOW_RESOURCE_TYPE, workflowId, null );
+
+            int nStateId = state.getId( );
+
+            switch( nStateId )
+            {
+                case 7:
+                    listDeclaredIncidents.add( signalement );
+
+                    break;
+
+                case 8:
+                    listUpdatedIncidents.add( signalement );
+
+                    break;
+
+                case 9:
+                    listUpdatedIncidents.add( signalement );
+
+                    break;
+
+                case 10:
+                    listResolvedIncidents.add( signalement );
+
+                    break;
+
+                case 11:
+                    break;
+
+                case 12:
+                    listResolvedIncidents.add( signalement );
+
+                    break;
+
+                case 13:
+                    listDeclaredIncidents.add( signalement );
+
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
     }
 
     /**
@@ -513,7 +538,7 @@ public class SignalementRestService implements ISignalementRestService
         {
             guid = jsonSrc.getString( SignalementRestConstants.JSON_TAG_GUID );
         }
-        catch ( Exception e )
+        catch( Exception e )
         {
             AppLogService.error( e );
         }
@@ -540,7 +565,8 @@ public class SignalementRestService implements ISignalementRestService
 
         if ( !StringUtils.EMPTY.equals( guid ) )
         {
-            json.accumulate( SignalementRestConstants.JSON_TAG_RESOLVED_AUTHORIZATION, signaleurFound && StringUtils.endsWithAny( getEmailIdentityStore( guid ), getEmailDomainAccept( ) ) );
+            json.accumulate( SignalementRestConstants.JSON_TAG_RESOLVED_AUTHORIZATION,
+                    signaleurFound || StringUtils.endsWithAny( getIdentityStoreAttributeValue( guid, "login" ).toLowerCase( ), getEmailDomainAccept( ) ) );
         }
         else
         {
@@ -590,10 +616,11 @@ public class SignalementRestService implements ISignalementRestService
             return formatterJsonError.format( error );
         }
 
-        List<Signalement> listSignalement = _signalementService.findAllSignalementInPerimeterWithInfo( Double.parseDouble( strLatitude ), Double.parseDouble( strLongitude ),
-                Integer.valueOf( strRadius ) );
+        List<Signalement> listSignalement = _signalementService.findAllSignalementInPerimeterWithInfo( Double.parseDouble( strLatitude ),
+                Double.parseDouble( strLongitude ), Integer.valueOf( strRadius ) );
 
-        List<Signalement> listSignalementSorted = getSignalementListSorted( Double.parseDouble( strLatitude ), Double.parseDouble( strLongitude ), listSignalement );
+        List<Signalement> listSignalementSorted = getSignalementListSorted( Double.parseDouble( strLatitude ), Double.parseDouble( strLongitude ),
+                listSignalement );
 
         SignalementFormatterJson formatterJson = new SignalementFormatterJson( );
         if ( !StringUtils.isBlank( guid ) )
@@ -601,7 +628,7 @@ public class SignalementRestService implements ISignalementRestService
             formatterJson.setFormatWithGuid( guid );
         }
 
-        JSONArray jsonArray = ( JSONArray ) JSONSerializer.toJSON( formatterJson.format( listSignalementSorted ) );
+        JSONArray jsonArray = (JSONArray) JSONSerializer.toJSON( formatterJson.format( listSignalementSorted ) );
 
         json.accumulate( SignalementRestConstants.JSON_TAG_CLOSEST_INCIDENTS, jsonArray.toString( ) );
 
@@ -626,7 +653,8 @@ public class SignalementRestService implements ISignalementRestService
      * @throws ParseSignalementFromJSONException
      *             parse exception
      */
-    public Signalement parseSignalement( JSONObject jsonSrc, Signalement signalement, Signaleur signaleur, Adresse adresse ) throws ParseSignalementFromJSONException
+    public Signalement parseSignalement( JSONObject jsonSrc, Signalement signalement, Signaleur signaleur, Adresse adresse )
+            throws ParseSignalementFromJSONException
     {
         IFormatter<ErrorSignalement> formatterJson = new ErrorSignalementFormatterJson( );
         String strUDID = jsonSrc.getString( SignalementRestConstants.JSON_TAG_UDID );
@@ -635,7 +663,7 @@ public class SignalementRestService implements ISignalementRestService
         {
             strEmail = jsonSrc.getString( SignalementRestConstants.JSON_TAG_EMAIL );
         }
-        catch ( Exception e )
+        catch( Exception e )
         {
             AppLogService.error( e );
             strEmail = AppPropertiesService.getProperty( SignalementRestConstants.PROPERTY_DEFAULT_EMAIL, "lutece@lutece.fr" );
@@ -646,7 +674,7 @@ public class SignalementRestService implements ISignalementRestService
         {
             guid = jsonSrc.getString( SignalementRestConstants.JSON_TAG_GUID );
         }
-        catch ( Exception e )
+        catch( Exception e )
         {
             AppLogService.error( e );
         }
@@ -731,7 +759,8 @@ public class SignalementRestService implements ISignalementRestService
         {
             ErrorSignalement error = new ErrorSignalement( );
             error.setErrorCode( SignalementRestConstants.ERROR_BAD_POSITION_PARAMETER );
-            error.setErrorMessage( "l'arrondissement n'est pas trouvé pour cette latitude et longitude. Etes vous bien dans Paris ? lat,lng : " + strLatitude + "," + strLongitude );
+            error.setErrorMessage( "l'arrondissement n'est pas trouvé pour cette latitude et longitude. Etes vous bien dans Paris ? lat,lng : " + strLatitude
+                    + "," + strLongitude );
 
             throw new ParseSignalementFromJSONException( formatterJson.format( error ) );
         }
@@ -739,15 +768,18 @@ public class SignalementRestService implements ISignalementRestService
         AppLogService.info( "saveIncident, arrondissementByGeom found " + arrondissementByGeom.getNumero( ) );
 
         // Secteur
-        Sector secteur = _adresseService.getSecteurByGeomAndTypeSignalement( Double.parseDouble( strLongitude ), Double.parseDouble( strLatitude ), Integer.parseInt( strCategoryId ) );
+        Sector secteur = _adresseService.getSecteurByGeomAndTypeSignalement( Double.parseDouble( strLongitude ), Double.parseDouble( strLatitude ),
+                Integer.parseInt( strCategoryId ) );
         if ( secteur == null )
         {
             ErrorSignalement error = new ErrorSignalement( );
             error.setErrorCode( SignalementRestConstants.ERROR_BAD_POSITION_PARAMETER );
-            error.setErrorMessage( "le secteur auquel attribuer cette anomalie n'a pas été trouvé. Si vous êtes bien dans Paris, il s'agit d'un problème de configuration du serveur. lat,lng,cat : "
-                    + strLatitude + "," + strLongitude + "," + strCategoryId );
-            AppLogService.error( "le secteur auquel attribuer ce message n'a pas été trouvé. Si vous êtes bien dans Paris, il s'agit d'un problème de configuration du serveur. lat,lng,cat : "
-                    + strLatitude + "," + strLongitude + "," + strCategoryId );
+            error.setErrorMessage(
+                    "le secteur auquel attribuer cette anomalie n'a pas été trouvé. Si vous êtes bien dans Paris, il s'agit d'un problème de configuration du serveur. lat,lng,cat : "
+                            + strLatitude + "," + strLongitude + "," + strCategoryId );
+            AppLogService.error(
+                    "le secteur auquel attribuer ce message n'a pas été trouvé. Si vous êtes bien dans Paris, il s'agit d'un problème de configuration du serveur. lat,lng,cat : "
+                            + strLatitude + "," + strLongitude + "," + strCategoryId );
 
             throw new ParseSignalementFromJSONException( formatterJson.format( error ) );
         }
@@ -780,7 +812,7 @@ public class SignalementRestService implements ISignalementRestService
             }
             signalement.setPrefix( strOrigin );
         }
-        catch ( Exception e )
+        catch( Exception e )
         {
             AppLogService.error( e );
             ErrorSignalement error = new ErrorSignalement( );
@@ -849,7 +881,7 @@ public class SignalementRestService implements ISignalementRestService
             {
                 strUserToken = jsonSrc.getString( SignalementRestConstants.JSON_TAG_USER_TOKEN );
             }
-            catch ( Exception e )
+            catch( Exception e )
             {
                 AppLogService.error( e );
             }
@@ -929,51 +961,7 @@ public class SignalementRestService implements ISignalementRestService
 
                 if ( workflowId != null )
                 {
-                    for ( Signalement signalement : listSignalement )
-                    {
-                        State state = workflowService.getState( signalement.getId( ).intValue( ), Signalement.WORKFLOW_RESOURCE_TYPE, workflowId, null );
-
-                        int nStateId = state.getId( );
-
-                        switch ( nStateId )
-                        {
-                            case 7:
-                                listDeclaredIncidents.add( signalement );
-
-                                break;
-
-                            case 8:
-                                listUpdatedIncidents.add( signalement );
-
-                                break;
-
-                            case 9:
-                                listUpdatedIncidents.add( signalement );
-
-                                break;
-
-                            case 10:
-                                listResolvedIncidents.add( signalement );
-
-                                break;
-
-                            case 11:
-                                break;
-
-                            case 12:
-                                listResolvedIncidents.add( signalement );
-
-                                break;
-
-                            case 13:
-                                listDeclaredIncidents.add( signalement );
-
-                                break;
-
-                            default:
-                                break;
-                        }
-                    }
+                    classifiedByState( listDeclaredIncidents, listResolvedIncidents, listUpdatedIncidents, workflowService, workflowId, listSignalement );
                 }
             }
 
@@ -1027,12 +1015,15 @@ public class SignalementRestService implements ISignalementRestService
                 if ( strStatus.equals( SignalementRestConstants.UPDATE_STATUS_RESOLVED ) )
                 {
                     // 18 ou 22
-                    workflowService.doProcessAction( Integer.parseInt( strIncidentId ), Signalement.WORKFLOW_RESOURCE_TYPE, 18, null, request, request.getLocale( ), true );
+                    workflowService.doProcessAction( Integer.parseInt( strIncidentId ), Signalement.WORKFLOW_RESOURCE_TYPE, 18, null, request,
+                            request.getLocale( ), true );
                 }
-                else if ( strStatus.equals( SignalementRestConstants.UPDATE_STATUS_INVALID ) )
-                {
-                    workflowService.doProcessAction( Integer.parseInt( strIncidentId ), Signalement.WORKFLOW_RESOURCE_TYPE, 16, null, request, request.getLocale( ), true );
-                }
+                else
+                    if ( strStatus.equals( SignalementRestConstants.UPDATE_STATUS_INVALID ) )
+                    {
+                        workflowService.doProcessAction( Integer.parseInt( strIncidentId ), Signalement.WORKFLOW_RESOURCE_TYPE, 16, null, request,
+                                request.getLocale( ), true );
+                    }
             }
         }
 
@@ -1137,9 +1128,11 @@ public class SignalementRestService implements ISignalementRestService
             for ( PhotoDMR photo : pPhotos )
             {
                 JSONObject jsonPhoto = new JSONObject( );
-                jsonPhoto.accumulate( SignalementRestConstants.JSON_TAG_PHOTO_URL, AppPropertiesService.getProperty( SignalementRestConstants.PROPERTY_URL_PICTURE ) + photo.getId( ) );
+                jsonPhoto.accumulate( SignalementRestConstants.JSON_TAG_PHOTO_URL,
+                        AppPropertiesService.getProperty( SignalementRestConstants.PROPERTY_URL_PICTURE ) + photo.getId( ) );
                 jsonPhoto.accumulate( SignalementRestConstants.JSON_TAG_COMMENTARY, StringUtils.EMPTY );
-                jsonPhoto.accumulate( SignalementRestConstants.JSON_TAG_INCIDENT_DATE, fr.paris.lutece.plugins.dansmarue.modules.rest.util.date.DateUtils.convertDate( photo.getDate( ) ) );
+                jsonPhoto.accumulate( SignalementRestConstants.JSON_TAG_INCIDENT_DATE,
+                        fr.paris.lutece.plugins.dansmarue.modules.rest.util.date.DateUtils.convertDate( photo.getDate( ) ) );
                 jsonArrayPhotos.element( jsonPhoto );
             }
         }
@@ -1162,129 +1155,142 @@ public class SignalementRestService implements ISignalementRestService
 
         if ( !isGoodFormat( jsonSrc ) )
         {
-            jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR, I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_WRONG_FORMAT, request.getLocale( ) ) );
+            jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR,
+                    I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_WRONG_FORMAT, request.getLocale( ) ) );
             jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
         }
         else
-        {
-            try
+            if ( !isTypeSignalementSelectable( jsonSrc ) )
             {
-                JSONObject answer = jsonSrc.getJSONObject( SignalementRestConstants.JSON_TAG_ANSWER );
-
-                int id = answer.getInt( SignalementRestConstants.JSON_TAG_INCIDENT_ID );
-                String status = answer.getString( SignalementRestConstants.JSON_TAG_STATUS );
-
-                Signalement signalement;
-
-                signalement = _signalementService.getSignalement( id );
-
-                if ( signalement == null )
+                jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR,
+                        I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_WRONG_TYPE, request.getLocale( ) ) );
+                jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
+            }
+            else
+            {
+                try
                 {
-                    jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR,
-                            I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_NO_ANOMALY_FOUND, request.getLocale( ) ) );
-                    jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
-                }
-                else
-                {
+                    JSONObject answer = jsonSrc.getJSONObject( SignalementRestConstants.JSON_TAG_ANSWER );
 
-                    String comment = answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_COMMENT ).equals( PARAMETER_NULL ) ? null
-                            : answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_COMMENT );
-                    String token = answer.getString( SignalementRestConstants.JSON_TAG_TOKEN );
-                    String reference = answer.getString( SignalementRestConstants.JSON_TAG_REFERENCE );
-                    String motifRejetAutre;
-                    String strDateProgrammee;
-                    String chosenMessage = answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_CHOSEN_MESSAGE ).equals( PARAMETER_NULL ) ? null
-                            : answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_CHOSEN_MESSAGE );
-                    String emailActeur = answer.containsKey( SignalementRestConstants.JSON_TAG_EMAIL ) ? answer.getString( SignalementRestConstants.JSON_TAG_EMAIL ) : null;
+                    int id = answer.getInt( SignalementRestConstants.JSON_TAG_INCIDENT_ID );
+                    String status = answer.getString( SignalementRestConstants.JSON_TAG_STATUS );
 
-                    String signalementreference = _signalementService.getSignalementReference( StringUtils.EMPTY, signalement );
+                    Signalement signalement;
 
-                    if ( !reference.equals( signalementreference ) )
+                    signalement = _signalementService.getSignalement( id );
+
+                    if ( signalement == null )
                     {
-
-                        // NOK la reference ne correspond pas
                         jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR,
                                 I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_NO_ANOMALY_FOUND, request.getLocale( ) ) );
                         jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
                     }
-
-                    else if ( token.equals( signalement.getToken( ) ) )
-                    {
-                        // OK le token correspond
-
-                        if ( controleCoherenceStatus( jsonObject, answer, jsonAnswer, request ) )
-                        {
-                            motifRejetAutre = StringUtils.isEmpty( answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_ID_REJET ) )
-                                    ? answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_ID_REJET )
-                                    : StringUtils.EMPTY;
-                            strDateProgrammee = StringUtils.isNotEmpty( answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_DATE_PROGRAMMATION ) )
-                                    ? answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_DATE_PROGRAMMATION )
-                                    : StringUtils.EMPTY;
-                            long idTypeAnomalie = PARAMETER_NULL.equals( answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_TYPE_ANOMALIE ) ) ? -1
-                                    : answer.getLong( SignalementRestConstants.JSON_TAG_INCIDENT_TYPE_ANOMALIE );
-
-                            request.getSession( ).setAttribute( PARAMETER_WEBSERVICE_CHOSEN_MESSAGE, chosenMessage );
-
-                            _manageSignalementService.manageStatusWithWorkflow( request, jsonObject, jsonAnswer, id, signalementreference, status, null, motifRejetAutre, strDateProgrammee,
-                                    idTypeAnomalie, comment, emailActeur );
-
-                            String photoSF = null;
-                            if ( answer.containsKey( SignalementRestConstants.JSON_TAG_INCIDENT_PHOTO ) )
-                            {
-                                photoSF = answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_PHOTO ).equals( PARAMETER_NULL ) ? null
-                                        : answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_PHOTO );
-                            }
-
-                            if ( ( photoSF != null ) && SignalementRestConstants.JSON_TAG_ANOMALY_DONE.equals( status ) )
-                            {
-                                PhotoDMR photo = new PhotoDMR( );
-
-                                ImageResource image = new ImageResource( );
-                                String width = AppPropertiesService.getProperty( SignalementConstants.IMAGE_THUMBNAIL_RESIZE_WIDTH );
-                                String height = AppPropertiesService.getProperty( SignalementConstants.IMAGE_THUMBNAIL_RESIZE_HEIGHT );
-
-                                String mimeType = photoSF.substring( photoSF.indexOf( "image" ), photoSF.indexOf( BASE_64 ) );
-
-                                String[] array = photoSF.split( BASE_64 );
-
-                                byte[] photoDecode = java.util.Base64.getDecoder( ).decode( array[1] );
-
-                                byte[] resizeImage = ImageUtil.resizeImage( photoDecode, width, height, 1 );
-                                image.setImage( photoDecode );
-                                mimeType = mimeType.replace( "x-png", "png" );
-                                image.setMimeType( mimeType );
-                                photo.setImage( image );
-                                photo.setImageContent( ImgUtils.checkQuality( image.getImage( ) ) );
-                                photo.setImageThumbnailWithBytes( resizeImage );
-                                photo.setSignalement( signalement );
-                                photo.setVue( SignalementRestConstants.VUE_SERVICE_FAIT );
-                                photo.setDate( new SimpleDateFormat( DateUtils.DATE_FR ).format( Calendar.getInstance( ).getTime( ) ) );
-
-                                // creation of the image in the db linked to the signalement
-                                _photoService.insert( photo );
-
-                            }
-
-                        }
-
-                    }
                     else
                     {
-                        // NOK le token ne correspond pas
-                        jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR,
-                                I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_NO_TOKEN_FOUND, request.getLocale( ) ) );
-                        jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
+
+                        String comment = answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_COMMENT ).equals( PARAMETER_NULL ) ? null
+                                : answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_COMMENT );
+                        String token = answer.getString( SignalementRestConstants.JSON_TAG_TOKEN );
+                        String reference = answer.getString( SignalementRestConstants.JSON_TAG_REFERENCE );
+                        String motifRejetAutre;
+                        String strDateProgrammee;
+                        String chosenMessage = answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_CHOSEN_MESSAGE ).equals( PARAMETER_NULL ) ? null
+                                : answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_CHOSEN_MESSAGE );
+                        String emailActeur = answer.containsKey( SignalementRestConstants.JSON_TAG_EMAIL )
+                                ? answer.getString( SignalementRestConstants.JSON_TAG_EMAIL )
+                                : null;
+
+                        String signalementreference = _signalementService.getSignalementReference( StringUtils.EMPTY, signalement );
+
+                        if ( !reference.equals( signalementreference ) )
+                        {
+
+                            // NOK la reference ne correspond pas
+                            jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR,
+                                    I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_NO_ANOMALY_FOUND, request.getLocale( ) ) );
+                            jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
+                        }
+
+                        else
+                            if ( token.equals( signalement.getToken( ) ) )
+                            {
+                                // OK le token correspond
+
+                                if ( controleCoherenceStatus( jsonObject, answer, jsonAnswer, request ) )
+                                {
+                                    motifRejetAutre = !StringUtils.isEmpty( answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_ID_REJET ) )
+                                            ? answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_ID_REJET )
+                                            : StringUtils.EMPTY;
+                                    strDateProgrammee = StringUtils
+                                            .isNotEmpty( answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_DATE_PROGRAMMATION ) )
+                                                    ? answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_DATE_PROGRAMMATION )
+                                                    : StringUtils.EMPTY;
+                                    long idTypeAnomalie = PARAMETER_NULL.equals( answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_TYPE_ANOMALIE ) )
+                                            ? -1
+                                            : answer.getLong( SignalementRestConstants.JSON_TAG_INCIDENT_TYPE_ANOMALIE );
+
+                                    request.getSession( ).setAttribute( PARAMETER_WEBSERVICE_CHOSEN_MESSAGE, chosenMessage );
+
+                                    _manageSignalementService.manageStatusWithWorkflow( request, jsonObject, jsonAnswer, id, signalementreference, status, null,
+                                            motifRejetAutre, strDateProgrammee, idTypeAnomalie, comment, emailActeur );
+
+                                    String photoSF = null;
+                                    if ( answer.containsKey( SignalementRestConstants.JSON_TAG_INCIDENT_PHOTO ) )
+                                    {
+                                        photoSF = answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_PHOTO ).equals( PARAMETER_NULL ) ? null
+                                                : answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_PHOTO );
+                                    }
+
+                                    if ( ( photoSF != null ) && SignalementRestConstants.JSON_TAG_ANOMALY_DONE.equals( status ) )
+                                    {
+                                        PhotoDMR photo = new PhotoDMR( );
+
+                                        ImageResource image = new ImageResource( );
+                                        String width = AppPropertiesService.getProperty( SignalementConstants.IMAGE_THUMBNAIL_RESIZE_WIDTH );
+                                        String height = AppPropertiesService.getProperty( SignalementConstants.IMAGE_THUMBNAIL_RESIZE_HEIGHT );
+
+                                        String mimeType = photoSF.substring( photoSF.indexOf( "image" ), photoSF.indexOf( BASE_64 ) );
+
+                                        String [ ] array = photoSF.split( BASE_64 );
+
+                                        byte [ ] photoDecode = java.util.Base64.getDecoder( ).decode( array [1] );
+
+                                        byte [ ] resizeImage = ImageUtil.resizeImage( photoDecode, width, height, 1 );
+                                        image.setImage( photoDecode );
+                                        mimeType = mimeType.replace( "x-png", "png" );
+                                        image.setMimeType( mimeType );
+                                        photo.setImage( image );
+                                        photo.setImageContent( ImgUtils.checkQuality( image.getImage( ) ) );
+                                        photo.setImageThumbnailWithBytes( resizeImage );
+                                        photo.setSignalement( signalement );
+                                        photo.setVue( SignalementRestConstants.VUE_SERVICE_FAIT );
+                                        photo.setDate( new SimpleDateFormat( DateUtils.DATE_FR ).format( Calendar.getInstance( ).getTime( ) ) );
+
+                                        // creation of the image in the db linked to the signalement
+                                        _photoService.insert( photo );
+
+                                    }
+
+                                }
+
+                            }
+                            else
+                            {
+                                // NOK le token ne correspond pas
+                                jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR,
+                                        I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_NO_TOKEN_FOUND, request.getLocale( ) ) );
+                                jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
+                            }
                     }
                 }
+                catch( JSONException e )
+                {
+                    AppLogService.error( e.getMessage( ), e );
+                    jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR,
+                            I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_DONE_WRONG_STATUS, request.getLocale( ) ) );
+                    jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
+                }
             }
-            catch ( JSONException e )
-            {
-                AppLogService.error( e.getMessage( ), e );
-                jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR,
-                        I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_DONE_WRONG_STATUS, request.getLocale( ) ) );
-                jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
-            }
-        }
         return jsonObject.toString( );
     }
 
@@ -1303,8 +1309,38 @@ public class SignalementRestService implements ISignalementRestService
                 && jsonSrc.getJSONObject( SignalementRestConstants.JSON_TAG_ANSWER ).containsKey( SignalementRestConstants.JSON_TAG_INCIDENT_DATE_REEL_ACTION )
                 && jsonSrc.getJSONObject( SignalementRestConstants.JSON_TAG_ANSWER ).containsKey( SignalementRestConstants.JSON_TAG_INCIDENT_COMMENT )
                 && jsonSrc.getJSONObject( SignalementRestConstants.JSON_TAG_ANSWER ).containsKey( SignalementRestConstants.JSON_TAG_INCIDENT_ID_REJET )
-                && jsonSrc.getJSONObject( SignalementRestConstants.JSON_TAG_ANSWER ).containsKey( SignalementRestConstants.JSON_TAG_INCIDENT_DATE_PROGRAMMATION )
+                && jsonSrc.getJSONObject( SignalementRestConstants.JSON_TAG_ANSWER )
+                        .containsKey( SignalementRestConstants.JSON_TAG_INCIDENT_DATE_PROGRAMMATION )
                 && jsonSrc.getJSONObject( SignalementRestConstants.JSON_TAG_ANSWER ).containsKey( SignalementRestConstants.JSON_TAG_INCIDENT_TYPE_ANOMALIE );
+    }
+
+    /**
+     * Check if the jsonSrc's type signalement is selectable and also active (via type id).
+     *
+     * @param jsonSrc
+     *            the json
+     * @return the boolean result
+     */
+    public boolean isTypeSignalementSelectable( JSONObject jsonSrc )
+    {
+        String status = jsonSrc.getJSONObject( SignalementRestConstants.JSON_TAG_ANSWER ).getString( SignalementRestConstants.JSON_TAG_STATUS );
+        String idTypeAnomalie = jsonSrc.getJSONObject( SignalementRestConstants.JSON_TAG_ANSWER )
+                .containsKey( SignalementRestConstants.JSON_TAG_INCIDENT_TYPE_ANOMALIE )
+                        ? jsonSrc.getJSONObject( SignalementRestConstants.JSON_TAG_ANSWER )
+                                .getString( SignalementRestConstants.JSON_TAG_INCIDENT_TYPE_ANOMALIE )
+                        : null;
+
+        if ( SignalementRestConstants.JSON_TAG_ANOMALY_REQUALIFIED.equals( status ) && StringUtils.isNumeric( idTypeAnomalie ) )
+        {
+            TypeSignalement selectedTypeSignalement = _typeSignalementService.getByIdTypeSignalement( Integer.parseInt( idTypeAnomalie ) );
+
+            return ( ( selectedTypeSignalement != null ) && selectedTypeSignalement.getActif( )
+                    && _typeSignalementService.isTypeSignalementSelectable( selectedTypeSignalement.getId( ) ) );
+        }
+        else
+        {
+            return true;
+        }
     }
 
     /**
@@ -1340,58 +1376,63 @@ public class SignalementRestService implements ISignalementRestService
                 result = false;
             }
         }
-        else if ( status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_REQUALIFIED ) )
-        {
-            // pour le status requalifier le type d'anomalie est obligatoire
-            String idTypeAnomalie = answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_TYPE_ANOMALIE );
-            if ( PARAMETER_NULL.equals( idTypeAnomalie ) || StringUtils.isBlank( idTypeAnomalie ) || !StringUtils.isNumeric( idTypeAnomalie ) )
+        else
+            if ( status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_REQUALIFIED ) )
             {
-
-                jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR,
-                        I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_REQUALIFIED_WRONG_TYPE_ANOMALIE, request.getLocale( ) ) );
-                jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
-
-                result = false;
-            }
-        }
-        else if ( status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_PROGRAMMED ) )
-        {
-            // Pour le status programmer la date de programmation est obligatoire
-            String strDateProgrammee = answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_DATE_PROGRAMMATION );
-
-            try
-            {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern( "dd/MM/yyyy" );
-                LocalDate dateTime = LocalDate.parse( strDateProgrammee, formatter );
-                if ( dateTime.atStartOfDay( ).toInstant( ZoneOffset.UTC ).isBefore( Instant.now( ).truncatedTo( ChronoUnit.DAYS ) ) )
+                // pour le status requalifier le type d'anomalie est obligatoire
+                String idTypeAnomalie = answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_TYPE_ANOMALIE );
+                if ( PARAMETER_NULL.equals( idTypeAnomalie ) || StringUtils.isBlank( idTypeAnomalie ) || !StringUtils.isNumeric( idTypeAnomalie ) )
                 {
+
                     jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR,
-                            I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_PROGRAMMED_DATE_BEFORE_TODAY, request.getLocale( ) ) );
+                            I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_REQUALIFIED_WRONG_TYPE_ANOMALIE, request.getLocale( ) ) );
                     jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
 
                     result = false;
                 }
             }
-            catch ( DateTimeParseException e )
-            {
-                AppLogService.error( e.getMessage( ), e );
+            else
+                if ( status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_PROGRAMMED ) )
+                {
+                    // Pour le status programmer la date de programmation est obligatoire
+                    String strDateProgrammee = answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_DATE_PROGRAMMATION );
 
-                jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR,
-                        I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_PROGRAMMED_WRONG_DATE_FORMAT, request.getLocale( ) ) );
-                jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
+                    try
+                    {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern( "dd/MM/yyyy" );
+                        LocalDate dateTime = LocalDate.parse( strDateProgrammee, formatter );
+                        if ( dateTime.atStartOfDay( ).toInstant( ZoneOffset.UTC ).isBefore( Instant.now( ).truncatedTo( ChronoUnit.DAYS ) ) )
+                        {
+                            jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR, I18nService
+                                    .getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_PROGRAMMED_DATE_BEFORE_TODAY, request.getLocale( ) ) );
+                            jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
 
-                result = false;
-            }
-        }
-        else if ( !status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_DONE ) && !status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_REQUALIFIED )
-                && !status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_A_REQUALIFIED ) )
-        {
-            // Le status n'est pas service fait ou rejeter ou programmer ou requalifier
-            jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR, I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_DIFFERENT_STATUS, request.getLocale( ) ) );
-            jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
+                            result = false;
+                        }
+                    }
+                    catch( DateTimeParseException e )
+                    {
+                        AppLogService.error( e.getMessage( ), e );
 
-            result = false;
-        }
+                        jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR,
+                                I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_PROGRAMMED_WRONG_DATE_FORMAT, request.getLocale( ) ) );
+                        jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
+
+                        result = false;
+                    }
+                }
+                else
+                    if ( !status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_DONE )
+                            && !status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_REQUALIFIED )
+                            && !status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_A_REQUALIFIED ) )
+                    {
+                        // Le status n'est pas service fait ou rejeter ou programmer ou requalifier
+                        jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR,
+                                I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_DIFFERENT_STATUS, request.getLocale( ) ) );
+                        jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
+
+                        result = false;
+                    }
 
         return result;
     }
@@ -1443,7 +1484,8 @@ public class SignalementRestService implements ISignalementRestService
             if ( !jsonSrc.has( SignalementRestConstants.JSON_TAG_CATEGORIES_CURVERSION_MOBILE_PROD ) )
             {
                 IFormatter<TypeSignalement> formatterJson = new CategoriesFormatterJson( );
-                jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_CATEGORIES, formatterJson.format( _typeSignalementService.getAllTypeSignalementByIsAgent( false ) ) );
+                jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_CATEGORIES,
+                        formatterJson.format( _typeSignalementService.getAllTypeSignalementByIsAgent( false ) ) );
             }
             else
             {
@@ -1520,7 +1562,7 @@ public class SignalementRestService implements ISignalementRestService
      *            the number
      * @return the anomalie by number
      */
-    public String getAnomalieByNumber( String number )
+    public String getAnomalieByNumber( String number, String guid )
     {
         _signalementService = SpringContextService.getBean( SignalementRestConstants.PARAMETER_SIGNALEMENT_SERVICE_BEAN );
 
@@ -1556,16 +1598,18 @@ public class SignalementRestService implements ISignalementRestService
             return formatterJsonError.format( error );
         }
 
-        IFormatter<SignalementRestDTO> formatterJson = new SignalementRestDTOFormatterJson( );
+        SignalementFormatterJson formatterJson = new SignalementFormatterJson( );
 
-        List<SignalementRestDTO> listSignalementRestDTO = new ArrayList<>( );
+        if ( !StringUtils.isBlank( guid ) )
+        {
+            formatterJson.setFormatWithGuid( guid );
+        }
 
-        SignalementRestDTO signalementRestDTO = new SignalementRestDTO( );
-        signalementRestDTO.setSignalement( signalement );
-        signalementRestDTO.setFollowedByUser( signalement.getSuivi( ) > 0 );
-        listSignalementRestDTO.add( signalementRestDTO );
+        List<Signalement> listSignalementRest = new ArrayList<>( );
+        listSignalementRest.add( signalement );
 
-        JSONArray jsonArray = ( JSONArray ) JSONSerializer.toJSON( formatterJson.format( listSignalementRestDTO ) );
+        JSONArray jsonArray = new JSONArray( );
+        jsonArray.add( JSONSerializer.toJSON( formatterJson.format( signalement ) ) );
 
         json.accumulate( SignalementRestConstants.JSON_TAG_INCIDENT, jsonArray.toString( ) );
 
@@ -1699,6 +1743,7 @@ public class SignalementRestService implements ISignalementRestService
     @Override
     public String updatePictureIncident( HttpServletRequest request, InputStream requestBodyStream )
     {
+
         _signalementService = SpringContextService.getBean( SignalementRestConstants.PARAMETER_SIGNALEMENT_SERVICE_BEAN );
         _photoService = SpringContextService.getBean( SignalementRestConstants.PARAMETER_PHOTO_SERVICE_BEAN );
 
@@ -1728,7 +1773,7 @@ public class SignalementRestService implements ISignalementRestService
 
             String width = AppPropertiesService.getProperty( SignalementConstants.IMAGE_THUMBNAIL_RESIZE_WIDTH );
             String height = AppPropertiesService.getProperty( SignalementConstants.IMAGE_THUMBNAIL_RESIZE_HEIGHT );
-            byte[] resizeImage = ImageUtil.resizeImage( out.toByteArray( ), width, height, 1 );
+            byte [ ] resizeImage = ImageUtil.resizeImage( out.toByteArray( ), width, height, 1 );
 
             PhotoDMR photoSignalement = new PhotoDMR( );
             photoSignalement.setImage( image );
@@ -1743,22 +1788,24 @@ public class SignalementRestService implements ISignalementRestService
                 {
                     photoSignalement.setVue( SignalementRestConstants.VUE_ENSEMBLE );
                 }
-                else if ( SignalementRestConstants.PICTURE_CLOSE.equals( strPhotoVue ) )
-                {
-                    photoSignalement.setVue( SignalementRestConstants.VUE_PRES );
-                }
-                else if ( SignalementRestConstants.PICTURE_DONE.equals( strPhotoVue ) )
-                {
-                    photoSignalement.setVue( SignalementRestConstants.VUE_SERVICE_FAIT );
-                }
+                else
+                    if ( SignalementRestConstants.PICTURE_CLOSE.equals( strPhotoVue ) )
+                    {
+                        photoSignalement.setVue( SignalementRestConstants.VUE_PRES );
+                    }
+                    else
+                        if ( SignalementRestConstants.PICTURE_DONE.equals( strPhotoVue ) )
+                        {
+                            photoSignalement.setVue( SignalementRestConstants.VUE_SERVICE_FAIT );
+                        }
             }
 
             // date of creation
             SimpleDateFormat sdfDate = new SimpleDateFormat( DateUtils.DATE_FR );
             photoSignalement.setDate( sdfDate.format( Calendar.getInstance( ).getTime( ) ) );
 
-            Optional<PhotoDMR> existPhoto = _photoService.findBySignalementId( signalement.getId( ) ).stream( ).filter( photo -> photo.getVue( ).intValue( ) == photoSignalement.getVue( ).intValue( ) )
-                    .findFirst( );
+            Optional<PhotoDMR> existPhoto = _photoService.findBySignalementId( signalement.getId( ) ).stream( )
+                    .filter( photo -> photo.getVue( ).intValue( ) == photoSignalement.getVue( ).intValue( ) ).findFirst( );
 
             if ( existPhoto.isPresent( ) )
             {
@@ -1770,13 +1817,17 @@ public class SignalementRestService implements ISignalementRestService
             out.close( );
         }
 
-        catch ( Exception e )
+        catch( Exception e )
         {
+
             AppLogService.error( e.getMessage( ), e );
 
             ErrorSignalement error = new ErrorSignalement( );
             error.setErrorCode( SignalementRestConstants.ERROR_BAD_PICTURE );
             error.setErrorMessage( e.getMessage( ) );
+
+            AppLogService.info( "java.awt.headless  to true" );
+            System.setProperty( "java.awt.headless", "true" );
 
             return formatterJson.format( error );
         }
@@ -1802,7 +1853,8 @@ public class SignalementRestService implements ISignalementRestService
      *            the report
      * @return answer
      */
-    public String updatePictureIncidentCordova( HttpServletRequest request, InputStream uploadedInputStream, FormDataContentDisposition fileDetail, String strIdIncident )
+    public String updatePictureIncidentCordova( HttpServletRequest request, InputStream uploadedInputStream, FormDataContentDisposition fileDetail,
+            String strIdIncident )
     {
         _signalementService = SpringContextService.getBean( SignalementRestConstants.PARAMETER_SIGNALEMENT_SERVICE_BEAN );
         _photoService = SpringContextService.getBean( SignalementRestConstants.PARAMETER_PHOTO_SERVICE_BEAN );
@@ -1837,7 +1889,7 @@ public class SignalementRestService implements ISignalementRestService
 
             String width = AppPropertiesService.getProperty( SignalementConstants.IMAGE_THUMBNAIL_RESIZE_WIDTH );
             String height = AppPropertiesService.getProperty( SignalementConstants.IMAGE_THUMBNAIL_RESIZE_HEIGHT );
-            byte[] resizeImage = ImageUtil.resizeImage( out.toByteArray( ), width, height, 1 );
+            byte [ ] resizeImage = ImageUtil.resizeImage( out.toByteArray( ), width, height, 1 );
 
             PhotoDMR photoSignalement = new PhotoDMR( );
             photoSignalement.setImage( image );
@@ -1852,10 +1904,11 @@ public class SignalementRestService implements ISignalementRestService
                 {
                     photoSignalement.setVue( SignalementRestConstants.VUE_ENSEMBLE );
                 }
-                else if ( SignalementRestConstants.PICTURE_CLOSE.equals( strPhotoVue ) )
-                {
-                    photoSignalement.setVue( SignalementRestConstants.VUE_PRES );
-                }
+                else
+                    if ( SignalementRestConstants.PICTURE_CLOSE.equals( strPhotoVue ) )
+                    {
+                        photoSignalement.setVue( SignalementRestConstants.VUE_PRES );
+                    }
             }
 
             // date of creation
@@ -1866,7 +1919,7 @@ public class SignalementRestService implements ISignalementRestService
             out.close( );
         }
 
-        catch ( Exception e )
+        catch( Exception e )
         {
             AppLogService.error( e.getMessage( ), e );
 
@@ -1905,7 +1958,7 @@ public class SignalementRestService implements ISignalementRestService
 
             String width = AppPropertiesService.getProperty( SignalementConstants.IMAGE_THUMBNAIL_RESIZE_WIDTH );
             String height = AppPropertiesService.getProperty( SignalementConstants.IMAGE_THUMBNAIL_RESIZE_HEIGHT );
-            byte[] resizeImage = ImageUtil.resizeImage( out.toByteArray( ), width, height, 1 );
+            byte [ ] resizeImage = ImageUtil.resizeImage( out.toByteArray( ), width, height, 1 );
 
             photoSignalement.setImage( image );
             photoSignalement.setImageContent( ImgUtils.checkQuality( image.getImage( ) ) );
@@ -1919,7 +1972,7 @@ public class SignalementRestService implements ISignalementRestService
             _photoService.insert( photoSignalement );
             out.close( );
         }
-        catch ( Exception e )
+        catch( Exception e )
         {
             AppLogService.error( e.getMessage( ), e );
         }
@@ -2214,7 +2267,7 @@ public class SignalementRestService implements ISignalementRestService
         {
             guid = jsonSrc.getString( SignalementRestConstants.JSON_TAG_GUID );
         }
-        catch ( Exception e )
+        catch( Exception e )
         {
             AppLogService.error( e );
         }
@@ -2224,7 +2277,7 @@ public class SignalementRestService implements ISignalementRestService
         {
             strUDID = jsonSrc.getString( SignalementRestConstants.JSON_TAG_UDID );
         }
-        catch ( Exception e )
+        catch( Exception e )
         {
             AppLogService.error( e );
         }
@@ -2234,7 +2287,7 @@ public class SignalementRestService implements ISignalementRestService
         {
             email = jsonSrc.getString( SignalementRestConstants.JSON_TAG_EMAIL );
         }
-        catch ( Exception e )
+        catch( Exception e )
         {
             AppLogService.error( e );
         }
@@ -2266,14 +2319,15 @@ public class SignalementRestService implements ISignalementRestService
 
         for ( Signaleur signaleur : signaleurs )
         {
-            if ( ( StringUtils.isNotBlank( guid ) && guid.equals( signaleur.getGuid( ) ) ) || ( StringUtils.isNotBlank( email ) && email.equals( signaleur.getMail( ) ) ) )
+            if ( ( StringUtils.isNotBlank( guid ) && guid.equals( signaleur.getGuid( ) ) )
+                    || ( StringUtils.isNotBlank( email ) && email.equals( signaleur.getMail( ) ) ) )
             {
                 signaleurFound = true;
             }
         }
 
         // Si le signaleur n'est pas trouvé et que l'email ne finit pas par @paris.fr, remonte une erreur
-        if ( !signaleurFound && !StringUtils.endsWithAny( getEmailIdentityStore( guid ), getEmailDomainAccept( ) ) )
+        if ( !signaleurFound && !StringUtils.endsWithAny( getIdentityStoreAttributeValue( guid, "email" ).toLowerCase( ), getEmailDomainAccept( ) ) )
         {
             AppLogService.error( "signaleur not found and bad domain email !! " );
             ErrorSignalement error = new ErrorSignalement( );
@@ -2287,16 +2341,19 @@ public class SignalementRestService implements ISignalementRestService
         {
             comment = jsonSrc.getString( SignalementRestConstants.JSON_TAG_INCIDENT_COMMENT );
         }
-        catch ( Exception e )
+        catch( Exception e )
         {
             AppLogService.error( e );
         }
 
         // recuperation numero message service fait
-        if ( jsonSrc.containsKey( SignalementRestConstants.JSON_TAG_NUMERO_MESSAGE_SERVICE_FAIT ) && jsonSrc.containsKey( SignalementRestConstants.JSON_TAG_TYPE_MESSAGE_SERVICE_FAIT ) )
+        if ( jsonSrc.containsKey( SignalementRestConstants.JSON_TAG_NUMERO_MESSAGE_SERVICE_FAIT )
+                && jsonSrc.containsKey( SignalementRestConstants.JSON_TAG_TYPE_MESSAGE_SERVICE_FAIT ) )
         {
-            request.getSession( ).setAttribute( PARAMETER_WEBSERVICE_CHOSEN_MESSAGE, jsonSrc.getInt( SignalementRestConstants.JSON_TAG_NUMERO_MESSAGE_SERVICE_FAIT ) );
-            request.getSession( ).setAttribute( PARAMETER_WEBSERVICE_IS_MESSAGE_TYPO, !jsonSrc.getBoolean( SignalementRestConstants.JSON_TAG_TYPE_MESSAGE_SERVICE_FAIT ) );
+            request.getSession( ).setAttribute( PARAMETER_WEBSERVICE_CHOSEN_MESSAGE,
+                    jsonSrc.getInt( SignalementRestConstants.JSON_TAG_NUMERO_MESSAGE_SERVICE_FAIT ) );
+            request.getSession( ).setAttribute( PARAMETER_WEBSERVICE_IS_MESSAGE_TYPO,
+                    !jsonSrc.getBoolean( SignalementRestConstants.JSON_TAG_TYPE_MESSAGE_SERVICE_FAIT ) );
         }
 
         // récupération de l'identifiant du workflow
@@ -2324,7 +2381,8 @@ public class SignalementRestService implements ISignalementRestService
 
             if ( StringUtils.isNotEmpty( email ) )
             {
-                ResourceHistory resourceHistory = _signalementWorkflowService.getLastHistoryResource( signalement.getId( ).intValue( ), Signalement.WORKFLOW_RESOURCE_TYPE, workflowId );
+                ResourceHistory resourceHistory = _signalementWorkflowService.getLastHistoryResource( signalement.getId( ).intValue( ),
+                        Signalement.WORKFLOW_RESOURCE_TYPE, workflowId );
                 _signalementWorkflowService.setUserAccessCodeHistoryResource( email, resourceHistory.getId( ) );
             }
         }
@@ -2346,20 +2404,28 @@ public class SignalementRestService implements ISignalementRestService
     }
 
     /**
-     * Method to get user information from identity store based on guid param request.
+     * Method to get user information from identity store based on guid param and attribute name param.
      *
      * @param guid
-     *            the guid user
-     * @return the email
+     * @param attributeName
+     * @return the value of attribute
      */
-    public String getEmailIdentityStore( String guid )
+    public String getIdentityStoreAttributeValue( String guid, String attributeName )
     {
+        IdentityService identityStore = SpringContextService.getBean( "identitystoremyluteceprovider.identitystore.identityService" );
+        IdentityDto identityDTO = null;
+        try
+        {
+            identityDTO = identityStore.getIdentityByConnectionId( guid,
+                    AppPropertiesService.getProperty( "identitystoremyluteceprovider.identityStoreApplicationCode" ) );
+        }
+        catch( IdentityNotFoundException | IdentityStoreException e )
+        {
+            AppLogService.error( e );
+            return StringUtils.EMPTY;
+        }
 
-        IdentityStoreProviderService identityStore = SpringContextService.getBean( "identitystoreopenamprovider.identityProviderService" );
-
-        Map<String, String> userInformations = identityStore.getIdentityInformations( guid );
-
-        return userInformations.get( AppPropertiesService.getProperty( OpenamService.CONSTANT_LUTECE_USER_PROPERTIES_PATH + "." + LuteceUser.BUSINESS_INFO_ONLINE_EMAIL ) );
+        return identityDTO.getAttributes( ).get( attributeName ) != null ? identityDTO.getAttributes( ).get( attributeName ).getValue( ) : "";
     }
 
     /**
@@ -2408,7 +2474,8 @@ public class SignalementRestService implements ISignalementRestService
         }
 
         String device = jsonSrc.getString( SignalementRestConstants.JSON_TAG_DEVICE );
-        if ( StringUtils.isBlank( device ) || ( !device.equals( SignalementRestConstants.SIGNALEMENT_PREFIX_IOS ) && !device.equals( SignalementRestConstants.SIGNALEMENT_PREFIX_ANDROID ) ) )
+        if ( StringUtils.isBlank( device ) || ( !device.equals( SignalementRestConstants.SIGNALEMENT_PREFIX_IOS )
+                && !device.equals( SignalementRestConstants.SIGNALEMENT_PREFIX_ANDROID ) ) )
         {
             ErrorSignalement error = new ErrorSignalement( );
             error.setErrorCode( SignalementRestConstants.ERROR_BAD_DEVICE );
@@ -2432,7 +2499,7 @@ public class SignalementRestService implements ISignalementRestService
         {
             _signalementService.addFollower( Long.parseLong( strIncidentId ), guid, strUDID, email, device, userToken, true );
         }
-        catch ( AlreadyFollowedException e )
+        catch( AlreadyFollowedException e )
         {
             AppLogService.error( e );
             ErrorSignalement error = new ErrorSignalement( );
@@ -2440,7 +2507,7 @@ public class SignalementRestService implements ISignalementRestService
             error.setErrorMessage( e.getMessage( ) );
             return formatterJsonError.format( error );
         }
-        catch ( InvalidStateActionException e )
+        catch( InvalidStateActionException e )
         {
             AppLogService.error( e );
             ErrorSignalement error = new ErrorSignalement( );
@@ -2490,7 +2557,7 @@ public class SignalementRestService implements ISignalementRestService
         {
             _signalementService.removeFollower( Long.parseLong( strIncidentId ), guid );
         }
-        catch ( NonExistentFollowItem e )
+        catch( NonExistentFollowItem e )
         {
             AppLogService.error( e );
             ErrorSignalement error = new ErrorSignalement( );
@@ -2530,7 +2597,8 @@ public class SignalementRestService implements ISignalementRestService
             return formatterJsonError.format( error );
         }
 
-        boolean filterOnResolved = SignalementRestConstants.MOBILE_STATE_RESOLVED.equals( jsonSrc.getString( SignalementRestConstants.JSON_TAG_FILTER_INCIDENT_STATUS ) );
+        boolean filterOnResolved = SignalementRestConstants.MOBILE_STATE_RESOLVED
+                .equals( jsonSrc.getString( SignalementRestConstants.JSON_TAG_FILTER_INCIDENT_STATUS ) );
 
         List<Signalement> listSignalement = _signalementService.getSignalementsByGuid( guid, filterOnResolved );
         List<SignalementRestDTO> listSignalementRestDTO = new ArrayList<>( );
@@ -2544,7 +2612,7 @@ public class SignalementRestService implements ISignalementRestService
 
         IFormatter<SignalementRestDTO> formatterJson = new SignalementRestDTOFormatterJson( );
 
-        JSONArray jsonArray = ( JSONArray ) JSONSerializer.toJSON( formatterJson.format( listSignalementRestDTO ) );
+        JSONArray jsonArray = (JSONArray) JSONSerializer.toJSON( formatterJson.format( listSignalementRestDTO ) );
 
         JSONObject json = new JSONObject( );
 
@@ -2636,10 +2704,11 @@ public class SignalementRestService implements ISignalementRestService
         {
             if ( ( null != signaleur ) && StringUtils.isNotBlank( signaleur.getGuid( ) ) )
             {
-                _signalementService.addFollower( Long.parseLong( idSignalement ), signaleur.getGuid( ), signaleur.getIdTelephone( ), signaleur.getMail( ), signalement.getPrefix( ), null, false );
+                _signalementService.addFollower( Long.parseLong( idSignalement ), signaleur.getGuid( ), signaleur.getIdTelephone( ), signaleur.getMail( ),
+                        signalement.getPrefix( ), null, false );
             }
         }
-        catch ( AlreadyFollowedException e )
+        catch( AlreadyFollowedException e )
         {
             AppLogService.error( e );
             ErrorSignalement error = new ErrorSignalement( );
@@ -2647,7 +2716,7 @@ public class SignalementRestService implements ISignalementRestService
             error.setErrorMessage( e.getMessage( ) );
             return formatterJsonError.format( error );
         }
-        catch ( InvalidStateActionException e )
+        catch( InvalidStateActionException e )
         {
             AppLogService.error( e );
             ErrorSignalement error = new ErrorSignalement( );
@@ -2681,9 +2750,11 @@ public class SignalementRestService implements ISignalementRestService
         JSONObject jsonObject = new JSONObject( );
         jsonObject.accumulate( "androidVersionStore", DatastoreService.getDataValue( "sitelabels.site_property.android.version.store", null ) );
         jsonObject.accumulate( "androidMajObligatoire", DatastoreService.getDataValue( "sitelabels.site_property.android.maj.obligatoire", null ) );
-        jsonObject.accumulate( "derniereVersionObligatoire", DatastoreService.getDataValue( "sitelabels.site_property.android.derniere.version.obligatoire", null ) );
+        jsonObject.accumulate( "derniereVersionObligatoire",
+                DatastoreService.getDataValue( "sitelabels.site_property.android.derniere.version.obligatoire", null ) );
         jsonObject.accumulate( "iosMajObligatoire", DatastoreService.getDataValue( "sitelabels.site_property.ios.maj.obligatoire", null ) );
-        jsonObject.accumulate( "iosDerniereVersionObligatoire", DatastoreService.getDataValue( "sitelabels.site_property.ios.derniere.version.obligatoire", null ) );
+        jsonObject.accumulate( "iosDerniereVersionObligatoire",
+                DatastoreService.getDataValue( "sitelabels.site_property.ios.derniere.version.obligatoire", null ) );
 
         jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonObject );
 
@@ -2793,7 +2864,7 @@ public class SignalementRestService implements ISignalementRestService
      * {@inheritDoc}
      */
     @Override
-    public Double[] getGeomFromLambertToWgs84( Double dLatLambert, Double dLngLambert )
+    public Double [ ] getGeomFromLambertToWgs84( Double dLatLambert, Double dLngLambert )
     {
         _signalementService = SpringContextService.getBean( SignalementRestConstants.PARAMETER_SIGNALEMENT_SERVICE_BEAN );
         return _signalementService.getGeomFromLambertToWgs84( dLatLambert, dLngLambert );
@@ -2803,7 +2874,7 @@ public class SignalementRestService implements ISignalementRestService
      * {@inheritDoc}
      */
     @Override
-    public Double[] getGeomFromLambert93ToWgs84( Double dLatLambert, Double dLngLambert )
+    public Double [ ] getGeomFromLambert93ToWgs84( Double dLatLambert, Double dLngLambert )
     {
         _signalementService = SpringContextService.getBean( SignalementRestConstants.PARAMETER_SIGNALEMENT_SERVICE_BEAN );
         return _signalementService.getGeomFromLambert93ToWgs84( dLatLambert, dLngLambert );
@@ -2939,10 +3010,10 @@ public class SignalementRestService implements ISignalementRestService
      *
      * @return array of valid domain
      */
-    private String[] getEmailDomainAccept( )
+    private String [ ] getEmailDomainAccept( )
     {
         String property = AppPropertiesService.getProperty( SignalementRestConstants.PROPERTY_LIST_DOMAIN_EMAIL );
-        String[] listDomainArr = null;
+        String [ ] listDomainArr = null;
         if ( StringUtils.isNotBlank( property ) )
         {
 
@@ -2952,8 +3023,14 @@ public class SignalementRestService implements ISignalementRestService
             }
             else
             {
-                listDomainArr = new String[1];
-                listDomainArr[0] = property;
+                listDomainArr = new String [ 1];
+                listDomainArr [0] = property;
+            }
+
+            // Fix pb de case
+            for ( int i = 0; i < listDomainArr.length; ++i )
+            {
+                listDomainArr [i] = listDomainArr [i].toLowerCase( );
             }
         }
         return listDomainArr;
@@ -3114,26 +3191,20 @@ public class SignalementRestService implements ISignalementRestService
         IFormatter<ErrorSignalement> formatterJson = new ErrorSignalementFormatterJson( );
         try
         {
-            JSONObject json = ( JSONObject ) JSONSerializer.toJSON( strRequest );
+            JSONObject json = (JSONObject) JSONSerializer.toJSON( strRequest );
             String guid = json.getString( SignalementRestConstants.JSON_TAG_GUID );
-            IdentityStoreProviderService identityStore = SpringContextService.getBean( "identitystoreopenamprovider.identityProviderService" );
-            Map<String, String> userInformations = identityStore.getIdentityInformations( guid );
-            String name = userInformations.get( AppPropertiesService.getProperty( OpenamService.CONSTANT_LUTECE_USER_PROPERTIES_PATH + "." + LuteceUser.NAME_NICKNAME ) );
-            if ( StringUtils.isBlank( name ) )
-            {
-                name = userInformations.get( AppPropertiesService.getProperty( OpenamService.CONSTANT_LUTECE_USER_PROPERTIES_PATH + "." + LuteceUser.NAME_FAMILY ) );
-            }
+            String name = getIdentityStoreAttributeValue( guid, "family_name" );
             if ( null == name )
             {
                 name = StringUtils.EMPTY;
             }
-            String firstname = userInformations.get( AppPropertiesService.getProperty( OpenamService.CONSTANT_LUTECE_USER_PROPERTIES_PATH + "." + LuteceUser.NAME_GIVEN ) );
-            String mail = userInformations.get( AppPropertiesService.getProperty( OpenamService.CONSTANT_LUTECE_USER_PROPERTIES_PATH + "." + LuteceUser.BUSINESS_INFO_ONLINE_EMAIL ) );
+            String firstname = getIdentityStoreAttributeValue( guid, "first_name" );
+            String mail = getIdentityStoreAttributeValue( guid, "login" );
             JSONObject userJson = new JSONObject( );
             userJson.accumulate( SignalementRestConstants.JSON_TAG_NAME, name );
             userJson.accumulate( SignalementRestConstants.JSON_TAG_FIRSTNAME, firstname );
             userJson.accumulate( SignalementRestConstants.JSON_TAG_MAIL, mail );
-            userJson.accumulate( SignalementRestConstants.JSON_TAG_IS_AGENT, StringUtils.endsWithAny( mail, getEmailDomainAccept( ) ) );
+            userJson.accumulate( SignalementRestConstants.JSON_TAG_IS_AGENT, StringUtils.endsWithAny( mail.toLowerCase( ), getEmailDomainAccept( ) ) );
 
             JSONObject jsonAnswer = new JSONObject( );
             JSONObject jsonData = new JSONObject( );
@@ -3142,7 +3213,7 @@ public class SignalementRestService implements ISignalementRestService
             jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonData );
             return jsonAnswer.toString( );
         }
-        catch ( JSONException e )
+        catch( JSONException e )
         {
             AppLogService.error( e.getMessage( ), e );
             ErrorSignalement error = new ErrorSignalement( );

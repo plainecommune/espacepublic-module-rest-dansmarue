@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -111,12 +111,12 @@ public class SignalementRest
     private SignalementRestService _signalementRestService;
 
     /** The sign request service. */
-    private SignRequestService     _signRequestService;
+    private SignRequestService _signRequestService;
 
     /** The new ws authenticator. */
     @Inject
     @Named( "rest.requestAuthenticator" )
-    private RequestAuthenticator   _newWsAuthenticator;
+    private RequestAuthenticator _newWsAuthenticator;
 
     /**
      * Set the signalement rest service.
@@ -182,7 +182,8 @@ public class SignalementRest
     @Path( SignalementRestConstants.PATH_API )
     @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
     @Produces( MediaType.APPLICATION_JSON )
-    public String processResquestAnswer( @FormParam( SignalementRestConstants.PARAMETERS_JSON_STREAM ) String strJSONStream, @Context HttpServletRequest request )
+    public String processResquestAnswer( @FormParam( SignalementRestConstants.PARAMETERS_JSON_STREAM ) String strJSONStream,
+            @Context HttpServletRequest request )
     {
         IFormatter<ErrorSignalement> formatterJson = new ErrorSignalementFormatterJson( );
 
@@ -196,12 +197,12 @@ public class SignalementRest
                     AppLogService.debug( strJSONStream );
                     return _signalementRestService.processResquestAnswer( strJSONStream, request );
                 }
-                catch ( ParseSignalementFromJSONException e )
+                catch( ParseSignalementFromJSONException e )
                 {
                     AppLogService.error( e );
                     return e.getParseError( );
                 }
-                catch ( Exception e )
+                catch( Exception e )
                 {
                     AppLogService.error( e.getMessage( ), e );
 
@@ -237,7 +238,8 @@ public class SignalementRest
     @GET
     @Path( SignalementRestConstants.PATH_TEST_GET )
     @Produces( MediaType.TEXT_PLAIN )
-    public String processResquestAnswerTest( @PathParam( SignalementRestConstants.PARAMETERS_JSON_STREAM ) String strJSONStream, @Context HttpServletRequest request )
+    public String processResquestAnswerTest( @PathParam( SignalementRestConstants.PARAMETERS_JSON_STREAM ) String strJSONStream,
+            @Context HttpServletRequest request )
     {
         IFormatter<ErrorSignalement> formatterJson = new ErrorSignalementFormatterJson( );
 
@@ -247,12 +249,12 @@ public class SignalementRest
             {
                 return _signalementRestService.processResquestAnswer( request.getParameter( SignalementRestConstants.PARAMETERS_JSON_STREAM ), request );
             }
-            catch ( ParseSignalementFromJSONException e )
+            catch( ParseSignalementFromJSONException e )
             {
                 AppLogService.error( e );
                 return e.getParseError( );
             }
-            catch ( JSONException e )
+            catch( JSONException e )
             {
                 AppLogService.error( e.getMessage( ), e );
 
@@ -306,20 +308,27 @@ public class SignalementRest
     @Path( SignalementRestConstants.PATH_API + SignalementRestConstants.SLASH + SignalementRestConstants.PATH_CHANGE_STATUS + "/{id}/{reference}/{token}" )
     @Produces( MediaType.APPLICATION_JSON )
     public String changeStatus( @Context HttpServletRequest request, @PathParam( value = SignalementRestConstants.JSON_TAG_INCIDENT_ID ) String id,
-            @PathParam( value = SignalementRestConstants.JSON_TAG_REFERENCE ) String reference, @PathParam( value = SignalementRestConstants.JSON_TAG_TOKEN ) String token,
-            @FormParam( value = SignalementRestConstants.JSON_TAG_STATUS ) String status, @FormParam( value = SignalementRestConstants.JSON_TAG_INCIDENT_CHOSEN_MESSAGE ) String chosenMessage,
-            @FormParam( value = SignalementRestConstants.JSON_TAG_INCIDENT_DATE_REEL_ACTION ) String date, @FormParam( value = SignalementRestConstants.JSON_TAG_INCIDENT_COMMENT ) String comment,
+            @PathParam( value = SignalementRestConstants.JSON_TAG_REFERENCE ) String reference,
+            @PathParam( value = SignalementRestConstants.JSON_TAG_TOKEN ) String token,
+            @FormParam( value = SignalementRestConstants.JSON_TAG_STATUS ) String status,
+            @FormParam( value = SignalementRestConstants.JSON_TAG_INCIDENT_CHOSEN_MESSAGE ) String chosenMessage,
+            @FormParam( value = SignalementRestConstants.JSON_TAG_INCIDENT_DATE_REEL_ACTION ) String date,
+            @FormParam( value = SignalementRestConstants.JSON_TAG_INCIDENT_COMMENT ) String comment,
             @FormParam( value = SignalementRestConstants.JSON_TAG_INCIDENT_ID_REJET ) String motifRejet,
             @FormParam( value = SignalementRestConstants.JSON_TAG_INCIDENT_DATE_PROGRAMMATION ) String dateDeProgrammation,
-            @FormParam( value = SignalementRestConstants.JSON_TAG_INCIDENT_TYPE_ANOMALIE ) String idTypeAnomalie, @FormParam( value = SignalementRestConstants.JSON_TAG_INCIDENT_PHOTO ) String photo )
+            @FormParam( value = SignalementRestConstants.JSON_TAG_INCIDENT_TYPE_ANOMALIE ) String idTypeAnomalie,
+            @FormParam( value = SignalementRestConstants.JSON_TAG_INCIDENT_PHOTO ) String photo )
     {
         AppLogService.info( "changeStatus call from client : " + request.getRemoteHost( ) + " ( " + request.getRemoteAddr( ) + " ) " );
-        AppLogService.info( "call parameters : id=" + id + " reference=" + reference + " token=" + token + " status=" + status + " chosenMessage=" + chosenMessage + " date=" + date + " comment="
-                + comment + " motifRejet=" + motifRejet + " dateDeProgrammation=" + dateDeProgrammation + " idTypeAnomalie=" + idTypeAnomalie );
+        AppLogService.info( "call parameters : id=" + id + " reference=" + reference + " token=" + token + " status=" + status + " chosenMessage="
+                + chosenMessage + " date=" + date + " comment=" + comment + " motifRejet=" + motifRejet + " dateDeProgrammation=" + dateDeProgrammation
+                + " idTypeAnomalie=" + idTypeAnomalie );
 
-        JSONObject jsonObject = createJSONStatusObject( id, reference, token, status, chosenMessage, date, comment, motifRejet, dateDeProgrammation, idTypeAnomalie, photo );
+        JSONObject jsonObject = createJSONStatusObject( id, reference, token, status, chosenMessage, date, comment, motifRejet, dateDeProgrammation,
+                idTypeAnomalie, photo );
 
-        AppLogService.info( "parameters to json : " + createJSONStatusObject( id, reference, token, status, chosenMessage, date, comment, motifRejet, dateDeProgrammation, idTypeAnomalie, null ) );
+        AppLogService.info( "parameters to json : "
+                + createJSONStatusObject( id, reference, token, status, chosenMessage, date, comment, motifRejet, dateDeProgrammation, idTypeAnomalie, null ) );
         String jsonResponse = _signalementRestService.changeStatus( jsonObject, request );
         AppLogService.info( "response send  : " + jsonResponse );
 
@@ -353,8 +362,8 @@ public class SignalementRest
      *            the report picture
      * @return JsonObjet of the report
      */
-    public JSONObject createJSONStatusObject( String id, String reference, String token, String status, String chosenMessage, String date, String comment, String motifRejet,
-            String dateDeProgrammation, String idTypeAnomalie, String photo )
+    public JSONObject createJSONStatusObject( String id, String reference, String token, String status, String chosenMessage, String date, String comment,
+            String motifRejet, String dateDeProgrammation, String idTypeAnomalie, String photo )
     {
         JSONObject jsonObject = new JSONObject( );
         jsonObject.accumulate( SignalementRestConstants.JSON_TAG_REQUEST, SignalementRestConstants.REQUEST_TYPE_CHANGE_STATUS );
@@ -469,9 +478,9 @@ public class SignalementRest
     @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
     @Produces( MediaType.TEXT_XML )
     public String blackBerryPostSignalement( @FormParam( "1" ) String strPriorite, @FormParam( "2" ) String strCategorie, @FormParam( "recordId" ) Long photoId,
-            @FormParam( "10" ) String strIdNomenclature, @FormParam( "12" ) String strDirection, @FormParam( "11_x" ) String strLatitude, @FormParam( "11_y" ) String strLongitude,
-            @FormParam( "11_address" ) String strAdresse, @FormParam( "key" ) String strKey, @FormParam( "6" ) String strEmail, @FormParam( "8" ) String strCommentaire,
-            @Context HttpServletRequest request )
+            @FormParam( "10" ) String strIdNomenclature, @FormParam( "12" ) String strDirection, @FormParam( "11_x" ) String strLatitude,
+            @FormParam( "11_y" ) String strLongitude, @FormParam( "11_address" ) String strAdresse, @FormParam( "key" ) String strKey,
+            @FormParam( "6" ) String strEmail, @FormParam( "8" ) String strCommentaire, @Context HttpServletRequest request )
     {
         Signalement signalement = new Signalement( );
 
@@ -521,13 +530,13 @@ public class SignalementRest
     public String blackBerryPostPicture( MultiPart multiPart )
     {
 
-        BodyPartEntity bpe = ( BodyPartEntity ) multiPart.getBodyParts( ).get( 1 ).getEntity( );
+        BodyPartEntity bpe = (BodyPartEntity) multiPart.getBodyParts( ).get( 1 ).getEntity( );
         try
         {
             InputStream source = bpe.getInputStream( );
             _signalementRestService.updatePictureIncidentBlackberry( source );
         }
-        catch ( Exception e )
+        catch( Exception e )
         {
             AppLogService.error( e );
             return "ko";
@@ -573,8 +582,12 @@ public class SignalementRest
      * @return all type of report
      */
     @POST
-    @Consumes( { MediaType.APPLICATION_JSON } )
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Consumes( {
+            MediaType.APPLICATION_JSON
+    } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( LibrarySiraConstants.REST_TYPE_SIGNALEMENT_SERVICE )
     public String getAllSousTypeSignalementCascade( String parameters )
     {
@@ -584,13 +597,14 @@ public class SignalementRest
             JSONObject object = new ObjectMapper( ).readValue( parameters, JSONObject.class );
             ObjectMapper mapper = new ObjectMapper( ).setVisibility( JsonMethod.FIELD, Visibility.ANY );
 
-            JSONArray array = ( JSONArray ) object.get( "listTypeSignalement" );
-            List<TypeSignalement> typeSignalement = mapper.readValue( array.toString( ), mapper.getTypeFactory( ).constructCollectionType( List.class, TypeSignalement.class ) );
-            _signalementRestService.getAllSousTypeSignalementCascade( ( Integer ) object.get( "typeSignalementId" ), typeSignalement );
+            JSONArray array = (JSONArray) object.get( "listTypeSignalement" );
+            List<TypeSignalement> typeSignalement = mapper.readValue( array.toString( ),
+                    mapper.getTypeFactory( ).constructCollectionType( List.class, TypeSignalement.class ) );
+            _signalementRestService.getAllSousTypeSignalementCascade( (Integer) object.get( "typeSignalementId" ), typeSignalement );
             return mapper.writeValueAsString( typeSignalement );
 
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             AppLogService.error( e );
             return formatJsonError( SignalementRestConstants.ERROR_GET_ALL_SOUS_TYPE_SIGNALEMENT_CASCADE, e.getMessage( ) );
@@ -606,8 +620,12 @@ public class SignalementRest
      * @return the report
      */
     @POST
-    @Consumes( { MediaType.APPLICATION_JSON } )
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Consumes( {
+            MediaType.APPLICATION_JSON
+    } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( LibrarySiraConstants.REST_GET_SIGNALEMENT_BY_ID )
     public String getSignalementById( String parameters )
     {
@@ -615,7 +633,7 @@ public class SignalementRest
         try
         {
             JSONObject object = mapper.readValue( parameters, JSONObject.class );
-            Long lIdSignalement = Long.valueOf( ( String ) object.get( SignalementRestConstants.JSON_TAG_SIGNALEMENT_ID ) );
+            Long lIdSignalement = Long.valueOf( (String) object.get( SignalementRestConstants.JSON_TAG_SIGNALEMENT_ID ) );
 
             SignalementDossierDTO dto = new SignalementDossierDTO( );
 
@@ -630,7 +648,7 @@ public class SignalementRest
 
             return mapper.writeValueAsString( dto );
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             AppLogService.error( e );
             return formatJsonError( SignalementRestConstants.ERROR_GET_SIGNALEMENT_BY_ID, e.getMessage( ) );
@@ -645,8 +663,12 @@ public class SignalementRest
      * @return the address
      */
     @POST
-    @Consumes( { MediaType.APPLICATION_JSON } )
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Consumes( {
+            MediaType.APPLICATION_JSON
+    } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( "getAddressItem" )
     public String getAddressItem( String parameters )
     {
@@ -655,7 +677,7 @@ public class SignalementRest
         {
             return mapper.writeValueAsString( _signalementRestService.getAddressItem( parameters ) );
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             AppLogService.error( e );
             return formatJsonError( SignalementRestConstants.ERROR_GET_SIGNALEMENT_BY_ID, e.getMessage( ) );
@@ -670,8 +692,12 @@ public class SignalementRest
      * @return the geom
      */
     @POST
-    @Consumes( { MediaType.APPLICATION_JSON } )
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Consumes( {
+            MediaType.APPLICATION_JSON
+    } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( "getGeomFromLambertToWgs84" )
     public String getGeomFromLambertToWgs84( String parameters )
     {
@@ -679,12 +705,12 @@ public class SignalementRest
         try
         {
             JSONObject object = new ObjectMapper( ).readValue( parameters, JSONObject.class );
-            Double dLatLambert = ( Double ) object.get( "dLatLambert" );
-            Double dLngLambert = ( Double ) object.get( "dLngLambert" );
+            Double dLatLambert = (Double) object.get( "dLatLambert" );
+            Double dLngLambert = (Double) object.get( "dLngLambert" );
 
             return mapper.writeValueAsString( _signalementRestService.getGeomFromLambertToWgs84( dLatLambert, dLngLambert ) );
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             AppLogService.error( e );
             return formatJsonError( SignalementRestConstants.ERROR_GET_SIGNALEMENT_BY_ID, e.getMessage( ) );
@@ -700,8 +726,12 @@ public class SignalementRest
      * @return the geom from lambert 93 to wgs 84
      */
     @POST
-    @Consumes( { MediaType.APPLICATION_JSON } )
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Consumes( {
+            MediaType.APPLICATION_JSON
+    } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( "getGeomFromLambert93ToWgs84" )
     public String getGeomFromLambert93ToWgs84( String parameters )
     {
@@ -709,12 +739,12 @@ public class SignalementRest
         try
         {
             JSONObject object = new ObjectMapper( ).readValue( parameters, JSONObject.class );
-            Double dLatLambert = ( Double ) object.get( "dLatLambert" );
-            Double dLngLambert = ( Double ) object.get( "dLngLambert" );
+            Double dLatLambert = (Double) object.get( "dLatLambert" );
+            Double dLngLambert = (Double) object.get( "dLngLambert" );
 
             return mapper.writeValueAsString( _signalementRestService.getGeomFromLambert93ToWgs84( dLatLambert, dLngLambert ) );
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             AppLogService.error( e );
             return formatJsonError( SignalementRestConstants.ERROR_GET_GEOM_FROM_LAMBERT_TO_WQ84, e.getMessage( ) );
@@ -729,8 +759,12 @@ public class SignalementRest
      * @return list of report in json format.
      */
     @POST
-    @Consumes( { MediaType.APPLICATION_JSON } )
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Consumes( {
+            MediaType.APPLICATION_JSON
+    } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( "findAllSignalementInPerimeterWithDTO" )
     public String findAllSignalementInPerimeterWithDTO( String parameters )
     {
@@ -738,13 +772,13 @@ public class SignalementRest
         try
         {
             JSONObject object = new ObjectMapper( ).readValue( parameters, JSONObject.class );
-            Double lat = ( Double ) object.get( "lat" );
-            Double lng = ( Double ) object.get( "lng" );
-            Integer radius = ( Integer ) object.get( "radius" );
+            Double lat = (Double) object.get( "lat" );
+            Double lng = (Double) object.get( "lng" );
+            Integer radius = (Integer) object.get( "radius" );
 
             return mapper.writeValueAsString( _signalementRestService.findAllSignalementInPerimeterWithDTO( lat, lng, radius ) );
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             AppLogService.error( e );
             return formatJsonError( SignalementRestConstants.ERROR_FIND_ALL_SIGNALLEMENT_IN_PERIMETER_WITH_DTO, e.getMessage( ) );
@@ -760,8 +794,12 @@ public class SignalementRest
      * @return the distance
      */
     @POST
-    @Consumes( { MediaType.APPLICATION_JSON } )
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Consumes( {
+            MediaType.APPLICATION_JSON
+    } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( "getDistanceBetweenSignalement" )
     public String getDistanceBetweenSignalement( String parameters )
     {
@@ -769,14 +807,14 @@ public class SignalementRest
         try
         {
             JSONObject object = new ObjectMapper( ).readValue( parameters, JSONObject.class );
-            Double lat1 = ( Double ) object.get( "lat1" );
-            Double lng1 = ( Double ) object.get( "lng1" );
-            Double lat2 = ( Double ) object.get( "lat2" );
-            Double lng2 = ( Double ) object.get( "lng2" );
+            Double lat1 = (Double) object.get( "lat1" );
+            Double lng1 = (Double) object.get( "lng1" );
+            Double lat2 = (Double) object.get( "lat2" );
+            Double lng2 = (Double) object.get( "lng2" );
 
             return mapper.writeValueAsString( _signalementRestService.getDistanceBetweenSignalement( lat1, lng1, lat2, lng2 ) );
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             AppLogService.error( e );
             return formatJsonError( SignalementRestConstants.ERROR_GET_DISTANCE_BETWEEN_SIGNALEMENT, e.getMessage( ) );
@@ -792,8 +830,12 @@ public class SignalementRest
      * @return true if the report is follow by user
      */
     @POST
-    @Consumes( { MediaType.APPLICATION_JSON } )
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Consumes( {
+            MediaType.APPLICATION_JSON
+    } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( "isSignalementFollowable" )
     public String isSignalementFollowableAndisSignalementFollowedByUser( String parameters )
     {
@@ -801,12 +843,12 @@ public class SignalementRest
         try
         {
             JSONObject object = new ObjectMapper( ).readValue( parameters, JSONObject.class );
-            Integer nIdSignalement = ( Integer ) object.get( SignalementRestConstants.JSON_TAG_SIGNALEMENT_ID_N );
-            String userGuid = ( String ) object.get( "userGuid" );
+            Integer nIdSignalement = (Integer) object.get( SignalementRestConstants.JSON_TAG_SIGNALEMENT_ID_N );
+            String userGuid = (String) object.get( "userGuid" );
 
             return mapper.writeValueAsString( _signalementRestService.isSignalementFollowableAndisSignalementFollowedByUser( nIdSignalement, userGuid ) );
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             AppLogService.error( e );
             return formatJsonError( SignalementRestConstants.ERROR_IS_SIGNALEMENT_FOLLOWABLE_AND_IS_SIGNALEMENT_FOLLOWED_BY_USER, e.getMessage( ) );
@@ -820,8 +862,12 @@ public class SignalementRest
      * @return the list of report priority.
      */
     @GET
-    @Consumes( { MediaType.APPLICATION_JSON } )
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Consumes( {
+            MediaType.APPLICATION_JSON
+    } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( "getAllPriorite" )
     @Encoded
     public String getAllPriorite( )
@@ -831,7 +877,7 @@ public class SignalementRest
         {
             return mapper.writeValueAsString( _signalementRestService.getAllPriorite( ) );
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             AppLogService.error( e );
             return formatJsonError( SignalementRestConstants.ERROR_GET_ALL_PRIORITE, e.getMessage( ) );
@@ -848,8 +894,12 @@ public class SignalementRest
      * @return the priority.
      */
     @POST
-    @Consumes( { MediaType.APPLICATION_JSON } )
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Consumes( {
+            MediaType.APPLICATION_JSON
+    } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( "loadPrioriteById" )
     public String loadPrioriteById( String parameters )
     {
@@ -861,7 +911,7 @@ public class SignalementRest
 
             return mapper.writeValueAsString( _signalementRestService.loadPrioriteById( lId ) );
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             AppLogService.error( e );
             return formatJsonError( SignalementRestConstants.ERROR_LOAD_PRIORITE_BY_ID, e.getMessage( ) );
@@ -878,8 +928,12 @@ public class SignalementRest
      * @return the priority.
      */
     @POST
-    @Consumes( { MediaType.APPLICATION_JSON } )
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Consumes( {
+            MediaType.APPLICATION_JSON
+    } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( "getArrondissementByGeom" )
     public String getArrondissementByGeom( String parameters )
     {
@@ -887,12 +941,12 @@ public class SignalementRest
         try
         {
             JSONObject object = new ObjectMapper( ).readValue( parameters, JSONObject.class );
-            Double lat = ( ( Number ) object.get( "lat" ) ).doubleValue( );
-            Double lng = ( ( Number ) object.get( "lng" ) ).doubleValue( );
+            Double lat = ( (Number) object.get( "lat" ) ).doubleValue( );
+            Double lng = ( (Number) object.get( "lng" ) ).doubleValue( );
 
             return mapper.writeValueAsString( _signalementRestService.getArrondissementByGeom( lng, lat ) );
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             AppLogService.error( e );
             return formatJsonError( SignalementRestConstants.ERROR_GET_ARRONDISSEMENT_BY_GEOM, e.getMessage( ) );
@@ -909,7 +963,9 @@ public class SignalementRest
      * @return all the report type.
      */
     @GET
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( "getTypeSignalementTree" )
     public String getTypeSignalementTree( @Context HttpServletRequest request )
     {
@@ -927,9 +983,12 @@ public class SignalementRest
      * @return the type signalement tree for source
      */
     @GET
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( "getTypeSignalementTreeForSource/{idSource}" )
-    public String getTypeSignalementTreeForSource( @PathParam( SignalementRestConstants.PARAMETERS_ID_SOURCE ) Integer idSource, @Context HttpServletRequest request )
+    public String getTypeSignalementTreeForSource( @PathParam( SignalementRestConstants.PARAMETERS_ID_SOURCE ) Integer idSource,
+            @Context HttpServletRequest request )
     {
         return _signalementRestService.getCategoriesListJsonForSource( idSource );
     }
@@ -944,7 +1003,9 @@ public class SignalementRest
      * @return the infos for source
      */
     @GET
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( "getInfosForSource/{idSource}" )
     public String getInfosForSource( @PathParam( SignalementRestConstants.PARAMETERS_ID_SOURCE ) Integer idSource, @Context HttpServletRequest request )
     {
@@ -957,7 +1018,7 @@ public class SignalementRest
         {
             return mapper.writeValueAsString( source );
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             AppLogService.error( e );
             return formatJsonError( SignalementRestConstants.ERROR_BAD_JSON_REQUEST, e.getMessage( ) );
@@ -972,8 +1033,12 @@ public class SignalementRest
      * @return type of report
      */
     @POST
-    @Consumes( { MediaType.APPLICATION_JSON } )
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Consumes( {
+            MediaType.APPLICATION_JSON
+    } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( "getTypeSignalement" )
     public String getTypeSignalement( String parameters )
     {
@@ -982,12 +1047,12 @@ public class SignalementRest
         try
         {
             object = new ObjectMapper( ).readValue( parameters, JSONObject.class );
-            Integer nIdSignalement = ( Integer ) object.get( "nIdSignalement" );
+            Integer nIdSignalement = (Integer) object.get( "nIdSignalement" );
             TypeSignalement typeSignalement = _signalementRestService.getTypeSignalement( nIdSignalement );
 
             return formatJsonTypeSignalement( typeSignalement );
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             AppLogService.error( e );
             return formatJsonError( SignalementRestConstants.ERROR_BAD_JSON_REQUEST, e.getMessage( ) );
@@ -1001,7 +1066,9 @@ public class SignalementRest
      * @return true if DMR is up
      */
     @GET
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( "isDmrOnline" )
     public String isDmrOnline( )
     {
@@ -1025,8 +1092,12 @@ public class SignalementRest
      * @return type of report.
      */
     @POST
-    @Consumes( { MediaType.APPLICATION_JSON } )
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Consumes( {
+            MediaType.APPLICATION_JSON
+    } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( "findByIdTypeSignalement" )
     public String findByIdTypeSignalement( String parameters )
     {
@@ -1035,12 +1106,12 @@ public class SignalementRest
         try
         {
             object = new ObjectMapper( ).readValue( parameters, JSONObject.class );
-            Integer nIdSignalement = ( Integer ) object.get( "nIdSignalement" );
+            Integer nIdSignalement = (Integer) object.get( "nIdSignalement" );
             TypeSignalement typeSignalement = _signalementRestService.findByIdTypeSignalement( nIdSignalement );
 
             return formatJsonTypeSignalement( typeSignalement );
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             AppLogService.error( e );
             return formatJsonError( SignalementRestConstants.ERROR_BAD_JSON_REQUEST, e.getMessage( ) );
@@ -1056,8 +1127,12 @@ public class SignalementRest
      * @return true if is OK
      */
     @POST
-    @Consumes( { MediaType.APPLICATION_JSON } )
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Consumes( {
+            MediaType.APPLICATION_JSON
+    } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( "addFollower" )
     public String addFollower( String parameters )
     {
@@ -1078,7 +1153,7 @@ public class SignalementRest
             jObject.put( "isAddOk", true );
 
         }
-        catch ( InvalidStateActionException | AlreadyFollowedException | IOException e )
+        catch( InvalidStateActionException | AlreadyFollowedException | IOException e )
         {
             AppLogService.error( e );
             jObject.put( "isAddOk", false );
@@ -1094,8 +1169,12 @@ public class SignalementRest
      * @return current folder.
      */
     @POST
-    @Consumes( { MediaType.APPLICATION_JSON } )
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Consumes( {
+            MediaType.APPLICATION_JSON
+    } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( "getDossiersCourrantsByGeomWithLimit" )
     public String getDossiersCourrantsByGeomWithLimit( String parameters )
     {
@@ -1109,7 +1188,7 @@ public class SignalementRest
 
             return _signalementRestService.getDossiersCourrantsByGeomWithLimit( longitude, latitude );
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             AppLogService.error( e );
             return formatJsonError( SignalementRestConstants.ERROR_BAD_JSON_REQUEST, e.getMessage( ) );
@@ -1184,8 +1263,12 @@ public class SignalementRest
      * @return actions workflow
      */
     @POST
-    @Consumes( { MediaType.APPLICATION_JSON } )
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Consumes( {
+            MediaType.APPLICATION_JSON
+    } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( LibrarySiraConstants.REST_GET_LIST_WORKFLOW_ACTION )
     public String getWorkflowActions( String parameters )
     {
@@ -1202,7 +1285,7 @@ public class SignalementRest
             return mapper.writeValueAsString( listActionsPossibles );
 
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             AppLogService.error( e );
             return formatJsonError( SignalementRestConstants.ERROR_WORKFLOW_ACTION, e.getMessage( ) );
@@ -1218,8 +1301,12 @@ public class SignalementRest
      * @return true if is ok
      */
     @POST
-    @Consumes( { MediaType.APPLICATION_JSON } )
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Consumes( {
+            MediaType.APPLICATION_JSON
+    } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( "sauvegarderSignalement" )
     public String sauvegarderSignalement( String parameters )
     {
@@ -1238,7 +1325,7 @@ public class SignalementRest
             return _signalementRestService.sauvegarderSignalement( demandeSignalement, userName, userMail ).toString( );
 
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             AppLogService.error( e );
             return formatJsonError( SignalementRestConstants.ERROR_SAVE_SIGNALEMENT, e.getMessage( ) );
@@ -1256,8 +1343,12 @@ public class SignalementRest
      * @return true if is service done
      */
     @POST
-    @Consumes( { MediaType.APPLICATION_JSON } )
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Consumes( {
+            MediaType.APPLICATION_JSON
+    } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( "validateServiceFaitSignalement" )
     public String validateServiceFaitSignalement( String parameters, @Context HttpServletRequest request )
     {
@@ -1275,7 +1366,7 @@ public class SignalementRest
 
             return jObject.toString( );
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             AppLogService.error( e );
             return formatJsonError( SignalementRestConstants.ERROR_GET_SIGNALEMENT_BY_TOKEN, e.getMessage( ) );
@@ -1291,8 +1382,12 @@ public class SignalementRest
      * @return the report
      */
     @POST
-    @Consumes( { MediaType.APPLICATION_JSON } )
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Consumes( {
+            MediaType.APPLICATION_JSON
+    } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( "getSignalementByToken" )
     public String getSignalementByToken( String parameters )
     {
@@ -1307,7 +1402,7 @@ public class SignalementRest
 
             return formatJsonSignalement( signalement );
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             AppLogService.error( e );
             return formatJsonError( SignalementRestConstants.ERROR_GET_SIGNALEMENT_BY_TOKEN, e.getMessage( ) );
@@ -1362,8 +1457,12 @@ public class SignalementRest
      * @return the history report
      */
     @POST
-    @Consumes( { MediaType.APPLICATION_JSON } )
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Consumes( {
+            MediaType.APPLICATION_JSON
+    } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( "getHistorySignalement" )
     public String getHistorySignalement( String parameters, @Context HttpServletRequest request )
     {
@@ -1373,7 +1472,9 @@ public class SignalementRest
         try
         {
             object = mapper.readValue( parameters, JSONObject.class );
-            String id = object.containsKey( SignalementRestConstants.JSON_TAG_SIGNALEMENT_ID ) ? object.getString( SignalementRestConstants.JSON_TAG_SIGNALEMENT_ID ) : null;
+            String id = object.containsKey( SignalementRestConstants.JSON_TAG_SIGNALEMENT_ID )
+                    ? object.getString( SignalementRestConstants.JSON_TAG_SIGNALEMENT_ID )
+                    : null;
 
             Integer idSignalement = mapper.readValue( id, Integer.class );
 
@@ -1381,7 +1482,7 @@ public class SignalementRest
 
             return mapper.writeValueAsString( response );
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             AppLogService.error( e );
             return formatJsonError( SignalementRestConstants.ERROR_GET_HISTORY_SIGNALEMENT, e.getMessage( ) );
@@ -1395,7 +1496,9 @@ public class SignalementRest
      * @return messages
      */
     @GET
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( "getTypeMessageServiceFait" )
     public String getTypeMessageServiceFait( )
     {
@@ -1409,7 +1512,7 @@ public class SignalementRest
             return mapper.writeValueAsString( response );
 
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             AppLogService.error( e );
             return formatJsonError( SignalementRestConstants.ERROR_BAD_JSON_REQUEST, e.getMessage( ) );
@@ -1423,7 +1526,9 @@ public class SignalementRest
      * @return messages
      */
     @GET
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
     @Path( "getRaisonRejet" )
     public String getRaisonRejet( )
     {
@@ -1434,7 +1539,7 @@ public class SignalementRest
         {
             return mapper.writeValueAsString( _signalementRestService.getRaisonRejet( ) );
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
             AppLogService.error( e );
             return formatJsonError( SignalementRestConstants.ERROR_BAD_JSON_REQUEST, e.getMessage( ) );
@@ -1442,22 +1547,48 @@ public class SignalementRest
         }
     }
 
-    
     /*
+     * Gets the anomalie by number.
+     * 
+     * Ancienne méthode de récupération sans le guid. Permet aux users n'ayant pas fait la MAJ de l'appli de pouvoir utiliser la recherche sans guid (mais avec
+     * le bug de suivi: DMR-2092)
+     *
+     * @param number the number
+     * 
+     * @param request the request
+     * 
+     * @return the anomalie by number
+     */
+    @GET
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
+    @Path( "getAnomalieByNumber/{number}" )
+    public String getAnomalieByNumber( @PathParam( SignalementRestConstants.PARAMETER_NUMBER ) String number, @Context HttpServletRequest request )
+    {
+        return _signalementRestService.getAnomalieByNumber( number, "-1" );
+    }
+
+    /**
      * Gets the anomalie by number.
      *
      * @param number
      *            the number
+     * @param guid
+     *            the guid
      * @param request
      *            the request
      * @return the anomalie by number
      */
     @GET
-    @Produces( { MediaType.APPLICATION_JSON + ";charset=utf-8" } )
-    @Path( "getAnomalieByNumber/{number}" )
-    public String getAnomalieByNumber( @PathParam( SignalementRestConstants.PARAMETER_NUMBER ) String number, @Context HttpServletRequest request )
+    @Produces( {
+            MediaType.APPLICATION_JSON + ";charset=utf-8"
+    } )
+    @Path( "getAnomalieByNumber/{number}/{guid}" )
+    public String getAnomalieByNumber( @PathParam( SignalementRestConstants.PARAMETER_NUMBER ) String number,
+            @PathParam( SignalementRestConstants.PARAMETER_GUID ) String guid, @Context HttpServletRequest request )
     {
-        return _signalementRestService.getAnomalieByNumber( number );
+        return _signalementRestService.getAnomalieByNumber( number, guid );
     }
 
     /**
@@ -1473,7 +1604,8 @@ public class SignalementRest
     @Path( "identitystore" )
     @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
     @Produces( MediaType.APPLICATION_JSON )
-    public String processIdentityStore( @FormParam( SignalementRestConstants.PARAMETERS_JSON_STREAM ) String strJSONStream, @Context HttpServletRequest request )
+    public String processIdentityStore( @FormParam( SignalementRestConstants.PARAMETERS_JSON_STREAM ) String strJSONStream,
+            @Context HttpServletRequest request )
     {
         IFormatter<ErrorSignalement> formatterJson = new ErrorSignalementFormatterJson( );
 
@@ -1485,7 +1617,7 @@ public class SignalementRest
                 AppLogService.debug( strJSONStream );
                 return _signalementRestService.processIdentityStore( strJSONStream );
             }
-            catch ( Exception e )
+            catch( Exception e )
             {
                 AppLogService.error( e.getMessage( ), e );
 

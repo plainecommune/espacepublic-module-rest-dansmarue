@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -72,11 +72,11 @@ public abstract class AbstractUploadHandler extends AbstractAsynchronousUploadHa
 
     /** The max file size. */
     @Value( "${signalement.upload.max.file.size}" )
-    private String   _maxFileSize;
+    private String _maxFileSize;
 
     /** The max category files count. */
     @Value( "${signalement.upload.max.category.files.count}" )
-    private Integer  _maxCategoryFilesCount;
+    private Integer _maxCategoryFilesCount;
 
     /**
      * Gets the max file size.
@@ -89,22 +89,22 @@ public abstract class AbstractUploadHandler extends AbstractAsynchronousUploadHa
     }
 
     /** The Constant PREFIX_ENTRY_ID. */
-    private static final String PREFIX_ENTRY_ID   = "dansmarue_";
+    private static final String PREFIX_ENTRY_ID = "dansmarue_";
 
     /** The Constant LOGGER. */
-    private static final Log    LOGGER            = LogFactory.getLog( AbstractUploadHandler.class );
+    private static final Log LOGGER = LogFactory.getLog( AbstractUploadHandler.class );
 
     /** The Constant ERROR_EXTENSION. */
-    public static final String  ERROR_EXTENSION   = "module.dansmarue.rest.message.upload.file.error.extension";
+    public static final String ERROR_EXTENSION = "module.dansmarue.rest.message.upload.file.error.extension";
 
     /** The Constant ERROR_FILES_COUNT. */
-    public static final String  ERROR_FILES_COUNT = "module.dansmarue.rest.message.upload.file.error.files.count";
+    public static final String ERROR_FILES_COUNT = "module.dansmarue.rest.message.upload.file.error.files.count";
 
     /** The Constant HANDLER_NAME. */
-    private static final String HANDLER_NAME      = "DansmarueAsynchronousUploadHandler";
+    private static final String HANDLER_NAME = "DansmarueAsynchronousUploadHandler";
 
     /** The extension list. */
-    private static List<String> _extensionList    = Arrays.asList( "jpeg", "png", "jpg" );
+    private static List<String> _extensionList = Arrays.asList( "jpeg", "png", "jpg" );
 
     /**
      * Constructor.
@@ -159,7 +159,9 @@ public abstract class AbstractUploadHandler extends AbstractAsynchronousUploadHa
 
             if ( getListUploadedFiles( strFieldName, request.getSession( ) ).size( ) >= _maxCategoryFilesCount )
             {
-                return I18nService.getLocalizedString( ERROR_FILES_COUNT, new Object[] { _maxCategoryFilesCount }, locale );
+                return I18nService.getLocalizedString( ERROR_FILES_COUNT, new Object [ ] {
+                        _maxCategoryFilesCount
+                }, locale );
             }
 
             for ( FileItem fileItem : listFileItemsToUpload )
@@ -250,7 +252,7 @@ public abstract class AbstractUploadHandler extends AbstractAsynchronousUploadHa
 
         if ( mapFileItemsSession == null )
         {
-            synchronized ( this )
+            synchronized( this )
             {
                 mapFileItemsSession = getMapAsynchronousUpload( ).get( strSessionId );
 
@@ -295,7 +297,7 @@ public abstract class AbstractUploadHandler extends AbstractAsynchronousUploadHa
 
             LOGGER.info( "Fichier supprimé avec succès : " + fileName );
         }
-        catch ( IOException ex )
+        catch( IOException ex )
         {
             LOGGER.error( "Impossible de supprimer le fichier : " + fileName, ex );
         }

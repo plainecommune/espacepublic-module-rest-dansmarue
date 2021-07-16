@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -81,95 +81,98 @@ import fr.paris.lutece.plugins.unittree.modules.dansmarue.business.sector.Sector
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import net.sf.json.JSONObject;
 
-
 /**
  * The Class SignalementRestServiceTest.
  */
 @RunWith( PowerMockRunner.class )
-@PrepareForTest( { SignalementConstants.class, AppPropertiesService.class, SignalementUtils.class } )
+@PrepareForTest( {
+        SignalementConstants.class, AppPropertiesService.class, SignalementUtils.class
+} )
 public class SignalementRestServiceTest
 {
-    
+
     /** The Constant JSON_VALUE_UDID. */
-    private static final String   JSON_VALUE_UDID                      = "B52";
-    
+    private static final String JSON_VALUE_UDID = "B52";
+
     /** The Constant JSON_VALUE_EMAIL. */
-    private static final String   JSON_VALUE_EMAIL                     = "junit@lutece.fr";
+    private static final String JSON_VALUE_EMAIL = "junit@lutece.fr";
 
     /** The Constant JSON_VALUE_LATITUDE. */
-    private static final String   JSON_VALUE_LATITUDE                  = "48.8468545";
-    
+    private static final String JSON_VALUE_LATITUDE = "48.8468545";
+
     /** The Constant JSON_VALUE_LATITUDE_DOUBLE. */
-    private static final double   JSON_VALUE_LATITUDE_DOUBLE           = new Double( JSON_VALUE_LATITUDE );
-    
+    private static final double JSON_VALUE_LATITUDE_DOUBLE = new Double( JSON_VALUE_LATITUDE );
+
     /** The Constant JSON_VALUE_LONGITUDE. */
-    private static final String   JSON_VALUE_LONGITUDE                 = "2.369533";
-    
+    private static final String JSON_VALUE_LONGITUDE = "2.369533";
+
     /** The Constant JSON_VALUE_LONGITUDE_DOUBLE. */
-    private static final double   JSON_VALUE_LONGITUDE_DOUBLE          = new Double( JSON_VALUE_LONGITUDE );
+    private static final double JSON_VALUE_LONGITUDE_DOUBLE = new Double( JSON_VALUE_LONGITUDE );
 
     /** The Constant JSON_VALUE_INCIDENT_CATEGORIE_ID. */
-    private static final String   JSON_VALUE_INCIDENT_CATEGORIE_ID     = "5201";
-    
-    /** The Constant JSON_VALUE_INCIDENT_CATEGORIE_ID_INT. */
-    private static final int      JSON_VALUE_INCIDENT_CATEGORIE_ID_INT = new Integer( JSON_VALUE_INCIDENT_CATEGORIE_ID );
-    
-    /** The Constant JSON_VALUE_INCIDENT_ADDRESS. */
-    private static final String   JSON_VALUE_INCIDENT_ADDRESS          = "226 rue";
-    
-    /** The Constant JSON_VALUE_INCIDENT_DESCRIPTIVE. */
-    private static final String   JSON_VALUE_INCIDENT_DESCRIPTIVE      = "Trou dans le sol";
-    
-    /** The Constant JSON_VALUE_INCIDENT_PRIORITE_ID. */
-    private static final Long     JSON_VALUE_INCIDENT_PRIORITE_ID      = 3L;
-    
-    /** The Constant JSON_VALUE_ORIGIN. */
-    private static final String   JSON_VALUE_ORIGIN                    = "A";
+    private static final String JSON_VALUE_INCIDENT_CATEGORIE_ID = "5201";
 
-    /**  Possible origin list *. */
-    private static final String[] SIGNALEMENT_POSSIBLE_ORIGINS         = { "A", "G", "S", "B" };
+    /** The Constant JSON_VALUE_INCIDENT_CATEGORIE_ID_INT. */
+    private static final int JSON_VALUE_INCIDENT_CATEGORIE_ID_INT = new Integer( JSON_VALUE_INCIDENT_CATEGORIE_ID );
+
+    /** The Constant JSON_VALUE_INCIDENT_ADDRESS. */
+    private static final String JSON_VALUE_INCIDENT_ADDRESS = "226 rue";
+
+    /** The Constant JSON_VALUE_INCIDENT_DESCRIPTIVE. */
+    private static final String JSON_VALUE_INCIDENT_DESCRIPTIVE = "Trou dans le sol";
+
+    /** The Constant JSON_VALUE_INCIDENT_PRIORITE_ID. */
+    private static final Long JSON_VALUE_INCIDENT_PRIORITE_ID = 3L;
+
+    /** The Constant JSON_VALUE_ORIGIN. */
+    private static final String JSON_VALUE_ORIGIN = "A";
+
+    /** Possible origin list *. */
+    private static final String [ ] SIGNALEMENT_POSSIBLE_ORIGINS = {
+            "A", "G", "S", "B"
+    };
 
     /** The json src. */
-    JSONObject                    jsonSrc;
-    
+    JSONObject jsonSrc;
+
     /** The possible signalement origins. */
-    private List<String>          possibleSignalementOrigins;
+    private List<String> possibleSignalementOrigins;
 
     /** The type signalement service. */
     @Mock
-    ITypeSignalementService       _typeSignalementService;
-    
+    ITypeSignalementService _typeSignalementService;
+
     /** The signalement service. */
     @Mock
-    ISignalementService           _signalementService;
-    
+    ISignalementService _signalementService;
+
     /** The adresse service. */
     @Mock
-    IAdresseService               _adresseService;
-    
+    IAdresseService _adresseService;
+
     /** The photo service. */
     @Mock
-    IPhotoService                 _photoService;
-    
+    IPhotoService _photoService;
+
     /** The signaleur service. */
     @Mock
-    ISignaleurService             _signaleurService;
-    
+    ISignaleurService _signaleurService;
+
     /** The signalement workflow service. */
     @Mock
-    IWorkflowService              _signalementWorkflowService;
-    
+    IWorkflowService _signalementWorkflowService;
+
     /** The ramen client service. */
     @Mock
-    RamenClientService            _ramenClientService;
-    
+    RamenClientService _ramenClientService;
+
     /** The priorite service. */
     @Mock
-    IPrioriteService              _prioriteService;
+    IPrioriteService _prioriteService;
 
     /** The signalement rest service. */
     @InjectMocks
-    SignalementRestService        signalementRestService               = new SignalementRestService( );
+    SignalementRestService signalementRestService = new SignalementRestService( );
 
     /**
      * Inits the.
@@ -219,7 +222,8 @@ public class SignalementRestServiceTest
 
         when( _typeSignalementService.findByIdTypeSignalement( JSON_VALUE_INCIDENT_CATEGORIE_ID_INT ) ).thenReturn( new TypeSignalement( ) );
         when( _adresseService.getArrondissementByGeom( JSON_VALUE_LONGITUDE_DOUBLE, JSON_VALUE_LATITUDE_DOUBLE ) ).thenReturn( new Arrondissement( ) );
-        when( _adresseService.getSecteurByGeomAndTypeSignalement( JSON_VALUE_LONGITUDE_DOUBLE, JSON_VALUE_LATITUDE_DOUBLE, JSON_VALUE_INCIDENT_CATEGORIE_ID_INT ) ).thenReturn( new Sector( ) );
+        when( _adresseService.getSecteurByGeomAndTypeSignalement( JSON_VALUE_LONGITUDE_DOUBLE, JSON_VALUE_LATITUDE_DOUBLE,
+                JSON_VALUE_INCIDENT_CATEGORIE_ID_INT ) ).thenReturn( new Sector( ) );
 
         Signalement signalement = new Signalement( );
         Signaleur signaleur = new Signaleur( );

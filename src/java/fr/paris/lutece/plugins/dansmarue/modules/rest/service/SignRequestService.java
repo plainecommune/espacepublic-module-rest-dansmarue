@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,20 +41,20 @@ import fr.paris.lutece.plugins.dansmarue.modules.rest.util.constants.Signalement
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.signrequest.security.Sha1HashService;
 
-
 /**
  * SignRequestService.
  */
 public class SignRequestService
 {
-    
+
     /** The sha 1 hash service. */
     private static Sha1HashService _sha1HashService;
 
     /**
      * setter.
      *
-     * @param sha1HashService            the service
+     * @param sha1HashService
+     *            the service
      */
     public static void setSha1HashService( Sha1HashService sha1HashService )
     {

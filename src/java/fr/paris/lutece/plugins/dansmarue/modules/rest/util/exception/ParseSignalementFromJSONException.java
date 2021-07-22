@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,23 +33,23 @@
  */
 package fr.paris.lutece.plugins.dansmarue.modules.rest.util.exception;
 
-
 /**
  * ParseSignalementFromJSONException.
  */
 public class ParseSignalementFromJSONException extends Exception
 {
-    
+
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 788062876624151154L;
 
     /** The str parse error. */
-    private String            _strParseError;
+    private String _strParseError;
 
     /**
      * Constructor with specific message about parsing.
      *
-     * @param parseError            the message
+     * @param parseError
+     *            the message
      */
     public ParseSignalementFromJSONException( String parseError )
     {
@@ -59,7 +59,8 @@ public class ParseSignalementFromJSONException extends Exception
     /**
      * Sets the parses the error.
      *
-     * @param message            the message to set
+     * @param message
+     *            the message to set
      */
     public void setParseError( String message )
     {

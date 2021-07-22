@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,17 +40,17 @@ import fr.paris.lutece.plugins.dansmarue.modules.rest.util.constants.SiraRestCon
 import fr.paris.lutece.plugins.rest.service.formatters.IFormatter;
 import net.sf.json.JSONObject;
 
-
 /**
  * ErrorSiraFormatterJson.
  */
 public class ErrorSiraFormatterJson implements IFormatter<ErrorSira>
 {
-    
+
     /**
      * Format.
      *
-     * @param resource the resource
+     * @param resource
+     *            the resource
      * @return the string
      */
     @Override
@@ -66,7 +66,8 @@ public class ErrorSiraFormatterJson implements IFormatter<ErrorSira>
     /**
      * Format.
      *
-     * @param listResources the list resources
+     * @param listResources
+     *            the list resources
      * @return the string
      */
     @Override
@@ -78,8 +79,10 @@ public class ErrorSiraFormatterJson implements IFormatter<ErrorSira>
     /**
      * Format error.
      *
-     * @param strCode the str code
-     * @param strMessage the str message
+     * @param strCode
+     *            the str code
+     * @param strMessage
+     *            the str message
      * @return the string
      */
     @Override

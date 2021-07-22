@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,13 +46,12 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-
 /**
  * CategoriesFormatterJson.
  */
 public class CategoriesFormatterJson implements IFormatter<TypeSignalement>
 {
-    
+
     /** The type signalement service. */
     // SERVICES
     private ITypeSignalementService _typeSignalementService = SpringContextService.getBean( "typeSignalementService" );

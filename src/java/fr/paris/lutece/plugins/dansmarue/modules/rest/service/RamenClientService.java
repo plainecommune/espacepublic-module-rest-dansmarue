@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,18 +45,19 @@ import fr.paris.lutece.util.httpaccess.HttpAccess;
 import fr.paris.lutece.util.httpaccess.HttpAccessException;
 import net.sf.json.JSONObject;
 
-
 /**
  * The Class RamenClientService.
  */
 public class RamenClientService
 {
-    
+
     /**
      * Gets the dossiers courrants by geom.
      *
-     * @param lng the lng
-     * @param lat the lat
+     * @param lng
+     *            the lng
+     * @param lat
+     *            the lat
      * @return the dossiers courrants by geom
      */
     public String getDossiersCourrantsByGeom( Double lng, Double lat )
@@ -87,7 +88,7 @@ public class RamenClientService
         {
             strReponseXml = httpAccess.doGet( strUrl.toString( ) );
         }
-        catch ( HttpAccessException e )
+        catch( HttpAccessException e )
         {
             AppLogService.error( e.getMessage( ), e );
         }
@@ -98,8 +99,10 @@ public class RamenClientService
     /**
      * Gets the dossiers courrants by geomm with limit.
      *
-     * @param lng the lng
-     * @param lat the lat
+     * @param lng
+     *            the lng
+     * @param lat
+     *            the lat
      * @return the dossiers courrants by geomm with limit
      */
     public String getDossiersCourrantsByGeommWithLimit( Double lng, Double lat )
@@ -112,7 +115,8 @@ public class RamenClientService
         HttpAccess httpAccess = new HttpAccess( );
 
         JSONObject jsonObj = new JSONObject( );
-        jsonObj.accumulate( SignalementRestConstants.PARAMETER_RADIUS, Integer.valueOf( ( AppPropertiesService.getProperty( SignalementRestConstants.PROPERTY_RADIUS ) ) ) );
+        jsonObj.accumulate( SignalementRestConstants.PARAMETER_RADIUS,
+                Integer.valueOf( ( AppPropertiesService.getProperty( SignalementRestConstants.PROPERTY_RADIUS ) ) ) );
         jsonObj.accumulate( SignalementRestConstants.PARAMETER_LONGITUDE, lng );
         jsonObj.accumulate( SignalementRestConstants.PARAMETER_LATITUDE, lat );
 
@@ -125,7 +129,7 @@ public class RamenClientService
             strReponse = httpAccess.doPostJSON( strUrl.toString( ), jsonObj.toString( ), headersRequest, headersResponse );
 
         }
-        catch ( HttpAccessException e )
+        catch( HttpAccessException e )
         {
             AppLogService.error( e.getMessage( ), e );
         }

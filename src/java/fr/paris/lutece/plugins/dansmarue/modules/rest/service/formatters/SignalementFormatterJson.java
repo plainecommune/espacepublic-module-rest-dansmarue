@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,7 +69,7 @@ public class SignalementFormatterJson implements IFormatter<Signalement>
     /**
      * guid transmit par les applications mobiles Permet d'identifier l'utilisateur de l'application.
      */
-    private String             _formatWithGuid         = null;
+    private String _formatWithGuid = null;
 
     /**
      * {@inheritDoc}
@@ -158,8 +158,8 @@ public class SignalementFormatterJson implements IFormatter<Signalement>
                     jsonObject.accumulate( SignalementRestConstants.JSON_TAG_INCIDENT_REPORTER_GUID, signaleur.getGuid( ) );
                 }
 
-                jsonObject.accumulate( SignalementRestConstants.JSON_TAG_IS_INCIDENT_ANONYME,
-                        StringUtils.isBlank( signaleur.getMail( ) ) && signalementSuiviService.findUsersMailByIdSignalement( signalement.getId( ) ).isEmpty( ) );
+                jsonObject.accumulate( SignalementRestConstants.JSON_TAG_IS_INCIDENT_ANONYME, StringUtils.isBlank( signaleur.getMail( ) )
+                        && signalementSuiviService.findUsersMailByIdSignalement( signalement.getId( ) ).isEmpty( ) );
             }
 
             jsonObject.accumulate( SignalementRestConstants.JSON_TAG_INCIDENT_CONGRATULATIONS, signalement.getFelicitations( ) );
@@ -185,22 +185,31 @@ public class SignalementFormatterJson implements IFormatter<Signalement>
                     // strStatus = R (Résolu)
                     // strStatus = U (Update traitement différé)
                     // strStatus = ONR (Ouver mais le statut ne permet pas la résolution)
-                    if ( ( nStateId == 7 ) || ( nStateId == 13 ) )
+                    // strStatus = T (Anomalie chez un tiers avec Webservice)
+                    if ( ( nStateId == 7 ) || ( nStateId == 13 ) || ( ( nStateId == 18 ) && !signalement.getIsSendWS( ) ) )
                     {
                         strStatus = "O";
                     }
-                    else if ( ( nStateId == 8 ) || ( nStateId == 9 ) || ( nStateId == 21 ) )
-                    {
-                        strStatus = "U";
-                    }
-                    else if ( ( nStateId == 10 ) || ( nStateId == 11 ) || ( nStateId == 12 ) || ( nStateId == 22 ) )
-                    {
-                        strStatus = "R";
-                    }
-                    else if ( ( nStateId == 15 ) || ( nStateId == 20 ) || ( nStateId == 12 ) )
-                    {
-                        strStatus = "ONR";
-                    }
+                    else
+                        if ( ( ( nStateId == 8 ) || ( nStateId == 9 ) ) || ( ( nStateId == 21 ) && !signalement.getIsSendWS( ) ) )
+                        {
+                            strStatus = "U";
+                        }
+                        else
+                            if ( ( nStateId == 10 ) || ( nStateId == 11 ) || ( nStateId == 12 ) || ( nStateId == 22 ) )
+                            {
+                                strStatus = "R";
+                            }
+                            else
+                                if ( ( nStateId == 15 ) || ( nStateId == 20 ) || ( nStateId == 12 ) )
+                                {
+                                    strStatus = "ONR";
+                                }
+                                else
+                                    if ( ( ( nStateId == 18 ) || ( nStateId == 21 ) ) && signalement.getIsSendWS( ) )
+                                    {
+                                        strStatus = "T";
+                                    }
                 }
             }
 
@@ -230,14 +239,16 @@ public class SignalementFormatterJson implements IFormatter<Signalement>
                 {
                     jsonPictureClose.element( AppPropertiesService.getProperty( SignalementRestConstants.PROPERTY_URL_PICTURE ) + photo.getId( ) );
                 }
-                else if ( photo.getVue( ).equals( SignalementRestConstants.VUE_ENSEMBLE ) )
-                {
-                    jsonPictureFar.element( AppPropertiesService.getProperty( SignalementRestConstants.PROPERTY_URL_PICTURE ) + photo.getId( ) );
-                }
-                else if ( photo.getVue( ).equals( SignalementRestConstants.VUE_SERVICE_FAIT ) )
-                {
-                    jsonPictureDone.element( AppPropertiesService.getProperty( SignalementRestConstants.PROPERTY_URL_PICTURE ) + photo.getId( ) );
-                }
+                else
+                    if ( photo.getVue( ).equals( SignalementRestConstants.VUE_ENSEMBLE ) )
+                    {
+                        jsonPictureFar.element( AppPropertiesService.getProperty( SignalementRestConstants.PROPERTY_URL_PICTURE ) + photo.getId( ) );
+                    }
+                    else
+                        if ( photo.getVue( ).equals( SignalementRestConstants.VUE_SERVICE_FAIT ) )
+                        {
+                            jsonPictureDone.element( AppPropertiesService.getProperty( SignalementRestConstants.PROPERTY_URL_PICTURE ) + photo.getId( ) );
+                        }
             }
 
             jsonObjectPictures.accumulate( SignalementRestConstants.JSON_TAG_INCIDENT_CLOSE, jsonPictureClose );
@@ -252,7 +263,8 @@ public class SignalementFormatterJson implements IFormatter<Signalement>
 
             jsonObject.accumulate( SignalementRestConstants.JSON_TAG_INCIDENT_INVALIDATIONS, 0 );
 
-            jsonObject.accumulate( SignalementRestConstants.JSON_TAG_INCIDENT_SOURCE, AppPropertiesService.getProperty( SignalementRestConstants.PROPERTY_INCIDENT_SOURCE_DMR ) );
+            jsonObject.accumulate( SignalementRestConstants.JSON_TAG_INCIDENT_SOURCE,
+                    AppPropertiesService.getProperty( SignalementRestConstants.PROPERTY_INCIDENT_SOURCE_DMR ) );
 
             jsonObject.accumulate( SignalementRestConstants.JSON_TAG_INCIDENT_NUEMERO, signalement.getNumeroSignalement( ) );
             jsonObject.accumulate( SignalementRestConstants.JSON_TAG_INCIDENT_TOKEN, signalement.getToken( ) );

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,21 +41,20 @@ import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.portal.service.util.AppLogService;
 
-
 /**
  * DateUtils.
  */
 public final class DateUtils
 {
-    
+
     /** The Constant FORMAT_DATE_1. */
     private static final String FORMAT_DATE_1 = "dd/MM/yyyy";
-    
+
     /** The Constant FORMAT_DATE_2. */
     private static final String FORMAT_DATE_2 = "yyyy-MM-dd";
 
     /** The Constant FORMAT_HOUR. */
-    private static final String FORMAT_HOUR   = "HH:mm";
+    private static final String FORMAT_HOUR = "HH:mm";
 
     /**
      * Costructor.
@@ -82,7 +81,7 @@ public final class DateUtils
             Date date = sfd.parse( strDate );
             strDateConverted = sfd2.format( date );
         }
-        catch ( ParseException e )
+        catch( ParseException e )
         {
             AppLogService.error( e.getMessage( ), e );
         }
@@ -93,7 +92,8 @@ public final class DateUtils
     /**
      * Formats a date, to pattern HH:mm.
      *
-     * @param hour            date to convert.
+     * @param hour
+     *            date to convert.
      * @return date format
      */
     public static String convertHour( Date hour )

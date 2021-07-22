@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -72,45 +72,44 @@ import fr.paris.lutece.util.image.ImageUtil;
 import fr.paris.lutece.util.signrequest.RequestAuthenticator;
 import net.sf.json.JSONObject;
 
-
 /**
  * The Class ManageSignalementService.
  */
 public class ManageSignalementService
 {
-    
+
     /** The Constant ACTION_SERVICE_FAIT. */
-    public static final String               ACTION_SERVICE_FAIT                         = "serviceFait";
-    
+    public static final String ACTION_SERVICE_FAIT = "serviceFait";
+
     /** The Constant ACTION_REJETER. */
-    public static final String               ACTION_REJETER                              = "rejeter";
-    
+    public static final String ACTION_REJETER = "rejeter";
+
     /** The Constant ACTION_PROGRAMMER. */
-    public static final String               ACTION_PROGRAMMER                           = "programmer";
-    
+    public static final String ACTION_PROGRAMMER = "programmer";
+
     /** The Constant ACTION_A_REQUALIFIER. */
-    public static final String               ACTION_A_REQUALIFIER                        = "a requalifier";
-    
+    public static final String ACTION_A_REQUALIFIER = "a requalifier";
+
     /** The Constant ACTION_REQUALIFIER. */
-    public static final String               ACTION_REQUALIFIER                          = "requalifier";
-    
+    public static final String ACTION_REQUALIFIER = "requalifier";
+
     /** The Constant ACTION_VALIDER. */
-    public static final String               ACTION_VALIDER                              = "Valider";
+    public static final String ACTION_VALIDER = "Valider";
 
     /** The Constant PARAMETER_WEBSERVICE_COMMENT_VALUE. */
-    private static final String              PARAMETER_WEBSERVICE_COMMENT_VALUE          = "webservice_comment_value";
-    
+    private static final String PARAMETER_WEBSERVICE_COMMENT_VALUE = "webservice_comment_value";
+
     /** The Constant PARAMETER_WEBSERVICE_SERVICE_FAIT_PRESTA. */
-    private static final String              PARAMETER_WEBSERVICE_SERVICE_FAIT_PRESTA    = "webservice_service_fait_presta";
-    
+    private static final String PARAMETER_WEBSERVICE_SERVICE_FAIT_PRESTA = "webservice_service_fait_presta";
+
     /** The Constant PARAMETER_WEBSERVICE_DATE_PREVUE_TRAITEMENT. */
-    private static final String              PARAMETER_WEBSERVICE_DATE_PREVUE_TRAITEMENT = "DatePrevueTraitement";
-    
+    private static final String PARAMETER_WEBSERVICE_DATE_PREVUE_TRAITEMENT = "DatePrevueTraitement";
+
     /** The Constant PARAMETER_WEBSERVICE_ID_TYPE_ANOMALIE. */
-    private static final String              PARAMETER_WEBSERVICE_ID_TYPE_ANOMALIE       = "idTypeAnomalie";
+    private static final String PARAMETER_WEBSERVICE_ID_TYPE_ANOMALIE = "idTypeAnomalie";
 
     /** The Constant actionStatus. */
-    private static final Map<String, String> actionStatus                                = new HashMap<>( );
+    private static final Map<String, String> actionStatus = new HashMap<>( );
     static
     {
         actionStatus.put( ACTION_REJETER, SignalementRestConstants.JSON_TAG_ANOMALY_REJECTED );
@@ -121,31 +120,31 @@ public class ManageSignalementService
     }
 
     /** The Constant JSON_TAG_ANOMALIE. */
-    public static final String                  JSON_TAG_ANOMALIE = "anomalie";
-    
+    public static final String JSON_TAG_ANOMALIE = "anomalie";
+
     /** The Constant JSON_TAG_REQUEST. */
-    public static final String                  JSON_TAG_REQUEST  = "request";
+    public static final String JSON_TAG_REQUEST = "request";
 
     /** The signalement workflow service. */
     @Inject
-    private IWorkflowService                    _signalementWorkflowService;
+    private IWorkflowService _signalementWorkflowService;
 
     /** The observation rejet service. */
     @Inject
-    private IObservationRejetService            _observationRejetService;
+    private IObservationRejetService _observationRejetService;
 
     /** The photo service. */
     @Inject
-    private IPhotoService                       _photoService;
+    private IPhotoService _photoService;
 
     /** The task service. */
     @Inject
-    private ITaskService                        _taskService;
+    private ITaskService _taskService;
 
     /** The authenticator. */
     @Inject
     @Named( "rest.requestAuthenticator" )
-    private RequestAuthenticator                _authenticator;
+    private RequestAuthenticator _authenticator;
 
     /** The observation rejet signalement service. */
     // SERVICES
@@ -154,32 +153,41 @@ public class ManageSignalementService
 
     /** The signalement service. */
     @Inject
-    private ISignalementService                 _signalementService;
+    private ISignalementService _signalementService;
 
     /**
      * process the change status.
      *
-     * @param request            the http request.
-     * @param action            the action.
-     * @param signalement            the report.
-     * @param commentaire            the comment.
-     * @param motifsRejetIds            reject reason.
-     * @param motifRejetAutre            reject reason other.
-     * @param strDateProgrammation            strDateProgrammation
-     * @param idTypeAnomalie            id type report.
-     * @param imageFile            the image file.
+     * @param request
+     *            the http request.
+     * @param action
+     *            the action.
+     * @param signalement
+     *            the report.
+     * @param commentaire
+     *            the comment.
+     * @param motifsRejetIds
+     *            reject reason.
+     * @param motifRejetAutre
+     *            reject reason other.
+     * @param strDateProgrammation
+     *            strDateProgrammation
+     * @param idTypeAnomalie
+     *            id type report.
+     * @param imageFile
+     *            the image file.
      * @return empty if no errors, error message otherwise
      */
-    public String processAction( HttpServletRequest request, String action, Signalement signalement, String commentaire, String[] motifsRejetIds, String motifRejetAutre, String strDateProgrammation,
-            long idTypeAnomalie, FileItem imageFile )
+    public String processAction( HttpServletRequest request, String action, Signalement signalement, String commentaire, String [ ] motifsRejetIds,
+            String motifRejetAutre, String strDateProgrammation, long idTypeAnomalie, FileItem imageFile )
     {
         String error = StringUtils.EMPTY;
 
         if ( actionStatus.containsKey( action ) )
         {
             JSONObject jsonAnswer = new JSONObject( );
-            manageStatusWithWorkflow( request, new JSONObject( ), jsonAnswer, signalement.getId( ).intValue( ), signalement.getSignalementReference( ), actionStatus.get( action ), motifsRejetIds,
-                    motifRejetAutre, strDateProgrammation, idTypeAnomalie, commentaire, null );
+            manageStatusWithWorkflow( request, new JSONObject( ), jsonAnswer, signalement.getId( ).intValue( ), signalement.getSignalementReference( ),
+                    actionStatus.get( action ), motifsRejetIds, motifRejetAutre, strDateProgrammation, idTypeAnomalie, commentaire, null );
             if ( jsonAnswer.containsKey( SignalementRestConstants.JSON_TAG_ERROR_ERROR ) )
             {
                 error = jsonAnswer.getString( SignalementRestConstants.JSON_TAG_ERROR_ERROR );
@@ -192,7 +200,7 @@ public class ManageSignalementService
                     ImageResource image = new ImageResource( );
                     String width = AppPropertiesService.getProperty( SignalementConstants.IMAGE_THUMBNAIL_RESIZE_WIDTH );
                     String height = AppPropertiesService.getProperty( SignalementConstants.IMAGE_THUMBNAIL_RESIZE_HEIGHT );
-                    byte[] resizeImage = ImageUtil.resizeImage( imageFile.get( ), width, height, 1 );
+                    byte [ ] resizeImage = ImageUtil.resizeImage( imageFile.get( ), width, height, 1 );
                     PhotoDMR photoSignalement = new PhotoDMR( );
                     image.setImage( imageFile.get( ) );
                     String mimeType = imageFile.getContentType( ).replace( "pjpeg", "jpeg" );
@@ -220,21 +228,33 @@ public class ManageSignalementService
     /**
      * Manage status with workflow.
      *
-     * @param request            the http request
-     * @param jsonObject            the json object
-     * @param jsonAnswer            the json answer
-     * @param id            the signalment id
-     * @param reference            the reference
-     * @param status            the signalement status
-     * @param motifsRejetIds            the reject cause ids
-     * @param motifRejetAutre            the reject cause autre
-     * @param strDateProgramme            the str date programme
-     * @param idTypeAnomalie            the id type anomalie
-     * @param comment            the comment
-     * @param emailActeur            email de l'agent ayant effectue l'action
+     * @param request
+     *            the http request
+     * @param jsonObject
+     *            the json object
+     * @param jsonAnswer
+     *            the json answer
+     * @param id
+     *            the signalment id
+     * @param reference
+     *            the reference
+     * @param status
+     *            the signalement status
+     * @param motifsRejetIds
+     *            the reject cause ids
+     * @param motifRejetAutre
+     *            the reject cause autre
+     * @param strDateProgramme
+     *            the str date programme
+     * @param idTypeAnomalie
+     *            the id type anomalie
+     * @param comment
+     *            the comment
+     * @param emailActeur
+     *            email de l'agent ayant effectue l'action
      */
-    public void manageStatusWithWorkflow( HttpServletRequest request, JSONObject jsonObject, JSONObject jsonAnswer, int id, String reference, String status, String[] motifsRejetIds,
-            String motifRejetAutre, String strDateProgramme, long idTypeAnomalie, String comment, String emailActeur )
+    public void manageStatusWithWorkflow( HttpServletRequest request, JSONObject jsonObject, JSONObject jsonAnswer, int id, String reference, String status,
+            String [ ] motifsRejetIds, String motifRejetAutre, String strDateProgramme, long idTypeAnomalie, String comment, String emailActeur )
     {
         // récupération de l'identifiant du workflow
         Integer workflowId = _signalementWorkflowService.getSignalementWorkflowId( );
@@ -244,7 +264,8 @@ public class ManageSignalementService
         int stateid = workflowService.getState( id, Signalement.WORKFLOW_RESOURCE_TYPE, workflowId, null ).getId( );
 
         if ( status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_DONE ) || status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_REJECTED )
-                || status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_PROGRAMMED ) || status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_A_REQUALIFIED )
+                || status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_PROGRAMMED )
+                || status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_A_REQUALIFIED )
                 || status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_REQUALIFIED ) )
         {
 
@@ -262,8 +283,8 @@ public class ManageSignalementService
 
                     request.getSession( ).setAttribute( PARAMETER_WEBSERVICE_SERVICE_FAIT_PRESTA, true );
 
-                    workflowService.doProcessAction( id, Signalement.WORKFLOW_RESOURCE_TYPE, SignalementRestConstants.ACTION_TRANSFERED_STATE_WEBSERVICE_ACCEPTED, null, request, request.getLocale( ),
-                            true );
+                    workflowService.doProcessAction( id, Signalement.WORKFLOW_RESOURCE_TYPE,
+                            SignalementRestConstants.ACTION_TRANSFERED_STATE_WEBSERVICE_ACCEPTED, null, request, request.getLocale( ), true );
                 }
                 else
                 {
@@ -273,184 +294,208 @@ public class ManageSignalementService
 
                         request.getSession( ).setAttribute( PARAMETER_WEBSERVICE_SERVICE_FAIT_PRESTA, true );
 
-                        workflowService.doProcessAction( id, Signalement.WORKFLOW_RESOURCE_TYPE, SignalementRestConstants.ACTION_PROGRAMMED_STATE_WEBSERVICE_ACCEPTED, null, request,
-                                request.getLocale( ), true );
+                        workflowService.doProcessAction( id, Signalement.WORKFLOW_RESOURCE_TYPE,
+                                SignalementRestConstants.ACTION_PROGRAMMED_STATE_WEBSERVICE_ACCEPTED, null, request, request.getLocale( ), true );
                     }
                     else
-                    {
-                        jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR,
-                                I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_DONE_WRONG_STATUS, request.getLocale( ) ) );
-                        jsonObject.remove( SignalementRestConstants.JSON_TAG_ANSWER );
-                        jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
-                    }
+                        if ( stateid != SignalementRestConstants.SERVICE_FAIT_STATUS_ID )
+                        {
+                            jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR,
+                                    I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_DONE_WRONG_STATUS, request.getLocale( ) ) );
+                            jsonObject.remove( SignalementRestConstants.JSON_TAG_ANSWER );
+                            jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
+                        }
+                }
+
+                String nomPrestataire = _signalementService.findPrestataireSignalement( id );
+                if ( StringUtils.isNotBlank( nomPrestataire ) )
+                {
+                    Integer nIdWorkflow = _signalementWorkflowService.getSignalementWorkflowId( );
+                    ResourceHistory resourceHistory = _signalementWorkflowService.getLastHistoryResource( id, Signalement.WORKFLOW_RESOURCE_TYPE, nIdWorkflow );
+                    _signalementWorkflowService.setUserAccessCodeHistoryResource( nomPrestataire, resourceHistory.getId( ) );
                 }
             }
             // Status = 'rejet'
-            else if ( status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_REJECTED ) )
-            {
-                // Check if signalement's state is "Transféré à un prestataire"
-                if ( stateid == SignalementRestConstants.TRANFERED_PROVIDER_STATUS_ID )
+            else
+                if ( status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_REJECTED ) )
                 {
-
-                    workflowService.doProcessAction( id, Signalement.WORKFLOW_RESOURCE_TYPE, SignalementRestConstants.ACTION_TRANSFERED_STATE_WEBSERVICE_REJECTED, null, request, request.getLocale( ),
-                            true );
-                }
-                else
-                {
-                    // Check if signalement's state is "Service programmé par un prestataire"
-                    if ( stateid == SignalementRestConstants.PROGRAMMED_STATUS_ID )
+                    // Check if signalement's state is "Transféré à un prestataire"
+                    if ( stateid == SignalementRestConstants.TRANFERED_PROVIDER_STATUS_ID )
                     {
-
-                        workflowService.doProcessAction( id, Signalement.WORKFLOW_RESOURCE_TYPE, SignalementRestConstants.ACTION_PROGRAMMED_STATE_WEBSERVICE_REJECTED, null, request,
-                                request.getLocale( ), true );
+                        request.getSession( ).setAttribute( SignalementRestConstants.JSON_TAG_INCIDENT_ID_REJET, motifRejetAutre );
+                        workflowService.doProcessAction( id, Signalement.WORKFLOW_RESOURCE_TYPE,
+                                SignalementRestConstants.ACTION_TRANSFERED_STATE_WEBSERVICE_REJECTED, null, request, request.getLocale( ), true );
                     }
                     else
                     {
-                        jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR,
-                                I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_REJECTED_WRONG_STATUS, request.getLocale( ) ) );
-                        jsonObject.remove( SignalementRestConstants.JSON_TAG_ANSWER );
-                        jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
+                        // Check if signalement's state is "Service programmé par un prestataire"
+                        if ( stateid == SignalementRestConstants.PROGRAMMED_STATUS_ID )
+                        {
+                            request.getSession( ).setAttribute( SignalementRestConstants.JSON_TAG_INCIDENT_ID_REJET, motifRejetAutre );
+                            workflowService.doProcessAction( id, Signalement.WORKFLOW_RESOURCE_TYPE,
+                                    SignalementRestConstants.ACTION_PROGRAMMED_STATE_WEBSERVICE_REJECTED, null, request, request.getLocale( ), true );
+                        }
+                        else
+                        {
+                            jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR,
+                                    I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_REJECTED_WRONG_STATUS, request.getLocale( ) ) );
+                            jsonObject.remove( SignalementRestConstants.JSON_TAG_ANSWER );
+                            jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
+                        }
                     }
                 }
-            }
-            // Status = 'service programme'
-            else if ( status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_PROGRAMMED ) )
-            {
-
-                request.getSession( ).setAttribute( PARAMETER_WEBSERVICE_DATE_PREVUE_TRAITEMENT, strDateProgramme );
-                // Check if signalement's state is "Transféré à un prestataire"
-                if ( stateid == SignalementRestConstants.TRANFERED_PROVIDER_STATUS_ID )
-                {
-
-                    workflowService.doProcessAction( id, Signalement.WORKFLOW_RESOURCE_TYPE, SignalementRestConstants.ACTION_TRANSFERED_STATE_WEBSERVICE_PROGRAMMED, null, request,
-                            request.getLocale( ), true );
-                }
+                // Status = 'service programme'
                 else
-                {
-                    // Check if signalement's state is "Service programmé par un prestataire"
-                    if ( stateid == SignalementRestConstants.PROGRAMMED_STATUS_ID )
+                    if ( status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_PROGRAMMED ) )
                     {
 
-                        workflowService.doProcessAction( id, Signalement.WORKFLOW_RESOURCE_TYPE, SignalementRestConstants.ACTION_PROGRAMMED_STATE_WEBSERVICE_PROGRAMMED, null, request,
-                                request.getLocale( ), true );
+                        request.getSession( ).setAttribute( PARAMETER_WEBSERVICE_DATE_PREVUE_TRAITEMENT, strDateProgramme );
+                        // Check if signalement's state is "Transféré à un prestataire"
+                        if ( stateid == SignalementRestConstants.TRANFERED_PROVIDER_STATUS_ID )
+                        {
+
+                            workflowService.doProcessAction( id, Signalement.WORKFLOW_RESOURCE_TYPE,
+                                    SignalementRestConstants.ACTION_TRANSFERED_STATE_WEBSERVICE_PROGRAMMED, null, request, request.getLocale( ), true );
+                        }
+                        else
+                        {
+                            // Check if signalement's state is "Service programmé par un prestataire"
+                            if ( stateid == SignalementRestConstants.PROGRAMMED_STATUS_ID )
+                            {
+
+                                workflowService.doProcessAction( id, Signalement.WORKFLOW_RESOURCE_TYPE,
+                                        SignalementRestConstants.ACTION_PROGRAMMED_STATE_WEBSERVICE_PROGRAMMED, null, request, request.getLocale( ), true );
+                            }
+                            else
+                            {
+                                jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR, I18nService
+                                        .getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_PROGRAMMED_WRONG_STATUS, request.getLocale( ) ) );
+                                jsonObject.remove( SignalementRestConstants.JSON_TAG_ANSWER );
+                                jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
+                            }
+                        }
+
                     }
+                    // Status = 'requalification'
                     else
-                    {
-                        jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR,
-                                I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_PROGRAMMED_WRONG_STATUS, request.getLocale( ) ) );
-                        jsonObject.remove( SignalementRestConstants.JSON_TAG_ANSWER );
-                        jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
-                    }
-                }
+                        if ( status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_REQUALIFIED ) )
+                        {
+                            request.getSession( ).setAttribute( PARAMETER_WEBSERVICE_ID_TYPE_ANOMALIE, idTypeAnomalie );
 
-            }
-            // Status = 'requalification'
-            else if ( status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_REQUALIFIED ) )
-            {
-                request.getSession( ).setAttribute( PARAMETER_WEBSERVICE_ID_TYPE_ANOMALIE, idTypeAnomalie );
+                            Signalement signalement = _signalementService.getSignalement( id );
 
-                Signalement signalement = _signalementService.getSignalement( id );
+                            // Select idAction Workflow depends on state report
+                            int idActionRequalifier = -1;
+                            if ( stateid == SignalementRestConstants.TRANFERED_PROVIDER_STATUS_ID )
+                            {
+                                idActionRequalifier = SignalementRestConstants.ACTION_TRANSFERED_STATE_WEBSERVICE_REQUALIFIED;
+                            }
+                            else
+                                if ( stateid == SignalementRestConstants.PROGRAMMED_STATUS_ID )
+                                {
+                                    idActionRequalifier = SignalementRestConstants.ACTION_PROGRAMMED_STATE_WEBSERVICE_REQUALIFIED;
+                                }
+                                else
+                                    if ( stateid == SignalementConstants.ID_STATE_A_TRAITER )
+                                    {
+                                        idActionRequalifier = SignalementRestConstants.ACTION_TODO_STATE_WEBSERVICE_A_REQUALIFIED;
+                                    }
+                                    else
+                                        if ( stateid == SignalementConstants.ID_STATE_NOUVEAU )
+                                        {
+                                            idActionRequalifier = SignalementRestConstants.ACTION_NEW_STATE_WEBSERVICE_A_REQUALIFIED;
+                                        }
+                                        else
+                                            if ( stateid == SignalementConstants.ID_STATE_PROGRAMME )
+                                            {
+                                                idActionRequalifier = SignalementRestConstants.ACTION_PROGRAMME_STATE_WEBSERVICE_A_REQUALIFIED;
+                                            }
+                                            else
+                                                if ( stateid == SignalementConstants.ID_STATE_A_REQUALIFIER )
+                                                {
+                                                    idActionRequalifier = SignalementRestConstants.ACTION_TO_REQUALIFIE_STATE_WEBSERVICE_A_REQUALIFIED;
+                                                }
 
-                // Select idAction Workflow depends on state report
-                int idActionRequalifier = -1;
-                if ( stateid == SignalementRestConstants.TRANFERED_PROVIDER_STATUS_ID )
-                {
-                    idActionRequalifier = SignalementRestConstants.ACTION_TRANSFERED_STATE_WEBSERVICE_REQUALIFIED;
-                }
-                else if ( stateid == SignalementRestConstants.PROGRAMMED_STATUS_ID )
-                {
-                    idActionRequalifier = SignalementRestConstants.ACTION_PROGRAMMED_STATE_WEBSERVICE_REQUALIFIED;
-                }
-                else if ( stateid == SignalementConstants.ID_STATE_A_TRAITER )
-                {
-                    idActionRequalifier = SignalementRestConstants.ACTION_TODO_STATE_WEBSERVICE_A_REQUALIFIED;
-                }
-                else if ( stateid == SignalementConstants.ID_STATE_NOUVEAU )
-                {
-                    idActionRequalifier = SignalementRestConstants.ACTION_NEW_STATE_WEBSERVICE_A_REQUALIFIED;
-                }
-                else if ( stateid == SignalementConstants.ID_STATE_PROGRAMME )
-                {
-                    idActionRequalifier = SignalementRestConstants.ACTION_PROGRAMME_STATE_WEBSERVICE_A_REQUALIFIED;
-                }
-                else if ( stateid == SignalementConstants.ID_STATE_A_REQUALIFIER )
-                {
-                    idActionRequalifier = SignalementRestConstants.ACTION_TO_REQUALIFIE_STATE_WEBSERVICE_A_REQUALIFIED;
-                }
+                            if ( idActionRequalifier != -1 )
+                            {
+                                // call workflow
+                                workflowService.doProcessAction( id, Signalement.WORKFLOW_RESOURCE_TYPE, idActionRequalifier, null, request,
+                                        request.getLocale( ), true );
+                            }
+                            else
+                            {
+                                jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR, I18nService
+                                        .getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_REQUALIFIED_WRONG_STATUS, request.getLocale( ) ) );
+                                jsonObject.remove( SignalementRestConstants.JSON_TAG_ANSWER );
+                                jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
+                            }
 
-                if ( idActionRequalifier != -1 )
-                {
-                    // call workflow
-                    workflowService.doProcessAction( id, Signalement.WORKFLOW_RESOURCE_TYPE, idActionRequalifier, null, request, request.getLocale( ), true );
-                }
-                else
-                {
-                    jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR,
-                            I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_REQUALIFIED_WRONG_STATUS, request.getLocale( ) ) );
-                    jsonObject.remove( SignalementRestConstants.JSON_TAG_ANSWER );
-                    jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
-                }
+                            Integer nIdWorkflow = _signalementWorkflowService.getSignalementWorkflowId( );
 
-                Integer nIdWorkflow = _signalementWorkflowService.getSignalementWorkflowId( );
+                            ResourceHistory resourceHistory = _signalementWorkflowService.getLastHistoryResource( signalement.getId( ).intValue( ),
+                                    Signalement.WORKFLOW_RESOURCE_TYPE, nIdWorkflow );
+                            ITask taskRequalification = null;
 
-                ResourceHistory resourceHistory = _signalementWorkflowService.getLastHistoryResource( signalement.getId( ).intValue( ), Signalement.WORKFLOW_RESOURCE_TYPE, nIdWorkflow );
-                ITask taskRequalification = null;
+                            List<ITask> listTask = _taskService.getListTaskByIdAction( resourceHistory.getAction( ).getId( ), Locale.FRENCH );
 
-                List<ITask> listTask = _taskService.getListTaskByIdAction( resourceHistory.getAction( ).getId( ), Locale.FRENCH );
+                            for ( ITask task : listTask )
+                            {
+                                if ( "taskSignalementRequalification".equals( task.getTaskType( ).getKey( ) ) )
+                                {
+                                    taskRequalification = task;
+                                }
+                            }
 
-                for ( ITask task : listTask )
-                {
-                    if ( "taskSignalementRequalification".equals( task.getTaskType( ).getKey( ) ) )
-                    {
-                        taskRequalification = task;
-                    }
-                }
+                            if ( taskRequalification != null )
+                            {
+                                _signalementService.saveRequalification( signalement.getId( ), signalement.getTypeSignalement( ).getId( ),
+                                        signalement.getAdresses( ).get( 0 ).getAdresse( ), signalement.getSecteur( ).getIdSector( ),
+                                        taskRequalification.getId( ), signalement.getCommentaireAgentTerrain( ) );
+                                _signalementService.setRequalificationIdHistory( signalement.getId( ), resourceHistory.getId( ), taskRequalification.getId( ) );
+                                _signalementService.updateCommentaireAgent( comment, signalement.getId( ) );
+                                if ( emailActeur != null )
+                                {
+                                    _signalementWorkflowService.setUserAccessCodeHistoryResource( emailActeur, resourceHistory.getId( ) );
+                                }
+                            }
 
-                if ( taskRequalification != null )
-                {
-                    _signalementService.saveRequalification( signalement.getId( ), signalement.getTypeSignalement( ).getId( ), signalement.getAdresses( ).get( 0 ).getAdresse( ),
-                            signalement.getSecteur( ).getIdSector( ), taskRequalification.getId( ), signalement.getCommentaireAgentTerrain( ) );
-                    _signalementService.setRequalificationIdHistory( signalement.getId( ), resourceHistory.getId( ), taskRequalification.getId( ) );
-                    _signalementService.updateCommentaireAgent( comment, signalement.getId( ) );
-                    if ( emailActeur != null )
-                    {
-                        _signalementWorkflowService.setUserAccessCodeHistoryResource( emailActeur, resourceHistory.getId( ) );
-                    }
-                }
+                        }
+                        // Status = a rqualifier
+                        else
+                            if ( status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_A_REQUALIFIED ) )
+                            {
 
-            }
-            // Status = a rqualifier
-            else if ( status.equals( SignalementRestConstants.JSON_TAG_ANOMALY_A_REQUALIFIED ) )
-            {
+                                if ( stateid == SignalementRestConstants.TRANFERED_PROVIDER_STATUS_ID )
+                                {
 
-                if ( stateid == SignalementRestConstants.TRANFERED_PROVIDER_STATUS_ID )
-                {
+                                    workflowService.doProcessAction( id, Signalement.WORKFLOW_RESOURCE_TYPE,
+                                            SignalementRestConstants.ACTION_TRANSFERED_STATE_WEBSERVICE_A_REQUALIFIED, null, request, request.getLocale( ),
+                                            true );
+                                }
+                                else
+                                {
+                                    // Check if signalement's state is "Service programmé par un prestataire"
+                                    if ( stateid == SignalementRestConstants.PROGRAMMED_STATUS_ID )
+                                    {
 
-                    workflowService.doProcessAction( id, Signalement.WORKFLOW_RESOURCE_TYPE, SignalementRestConstants.ACTION_TRANSFERED_STATE_WEBSERVICE_A_REQUALIFIED, null, request,
-                            request.getLocale( ), true );
-                }
-                else
-                {
-                    // Check if signalement's state is "Service programmé par un prestataire"
-                    if ( stateid == SignalementRestConstants.PROGRAMMED_STATUS_ID )
-                    {
-
-                        workflowService.doProcessAction( id, Signalement.WORKFLOW_RESOURCE_TYPE, SignalementRestConstants.ACTION_PROGRAMMED_STATE_WEBSERVICE_A_REQUALIFIED, null, request,
-                                request.getLocale( ), true );
-                    }
-                    else
-                    {
-                        jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR,
-                                I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_REQUALIFIED_WRONG_STATUS, request.getLocale( ) ) );
-                        jsonObject.remove( SignalementRestConstants.JSON_TAG_ANSWER );
-                        jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
-                    }
-                }
-            }
+                                        workflowService.doProcessAction( id, Signalement.WORKFLOW_RESOURCE_TYPE,
+                                                SignalementRestConstants.ACTION_PROGRAMMED_STATE_WEBSERVICE_A_REQUALIFIED, null, request, request.getLocale( ),
+                                                true );
+                                    }
+                                    else
+                                    {
+                                        jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR, I18nService
+                                                .getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_REQUALIFIED_WRONG_STATUS, request.getLocale( ) ) );
+                                        jsonObject.remove( SignalementRestConstants.JSON_TAG_ANSWER );
+                                        jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
+                                    }
+                                }
+                            }
         }
         else
         {
-            jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR, I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_DIFFERENT_STATUS, request.getLocale( ) ) );
+            jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR,
+                    I18nService.getLocalizedString( SignalementRestConstants.ERROR_MESSAGE_DIFFERENT_STATUS, request.getLocale( ) ) );
             jsonObject.remove( SignalementRestConstants.JSON_TAG_ANSWER );
             jsonObject.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonAnswer );
         }
@@ -459,7 +504,8 @@ public class ManageSignalementService
     /**
      * Check if the id of the reject cause id exists.
      *
-     * @param rejectcauseid            the reject cause id given by WS
+     * @param rejectcauseid
+     *            the reject cause id given by WS
      * @return true if it exists, false if it doesn't
      */
     public boolean checkRejectCauseIdExist( int rejectcauseid )

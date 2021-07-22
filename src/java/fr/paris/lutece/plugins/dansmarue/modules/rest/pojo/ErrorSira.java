@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,16 +33,15 @@
  */
 package fr.paris.lutece.plugins.dansmarue.modules.rest.pojo;
 
-
 /**
  * Error Sira Object.
  */
 public class ErrorSira
 {
-    
+
     /** The n error code. */
-    int    _nErrorCode;
-    
+    int _nErrorCode;
+
     /** The str error message. */
     String _strErrorMessage;
 
@@ -59,7 +58,8 @@ public class ErrorSira
     /**
      * Sets the error code.
      *
-     * @param nErrorCode            the nErrorCode to set
+     * @param nErrorCode
+     *            the nErrorCode to set
      */
     public void setErrorCode( int nErrorCode )
     {
@@ -79,7 +79,8 @@ public class ErrorSira
     /**
      * Sets the error message.
      *
-     * @param strErrorMessage            the strErrorMessage to set
+     * @param strErrorMessage
+     *            the strErrorMessage to set
      */
     public void setErrorMessage( String strErrorMessage )
     {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -81,120 +81,120 @@ public class ManageSignalementApp implements XPageApplication
 {
 
     /** The Constant serialVersionUID. */
-    private static final long                  serialVersionUID               = 4838342837767932281L;
+    private static final long serialVersionUID = 4838342837767932281L;
 
     /** The Constant PROPERTY_BASE_URL. */
     // PROPERTIES
-    private static final String                PROPERTY_BASE_URL              = "lutece.prod.url";
+    private static final String PROPERTY_BASE_URL = "lutece.prod.url";
 
     /** The Constant JSP_PORTAL. */
     // JSP
-    private static final String                JSP_PORTAL                     = "jsp/site/Portal.jsp";
+    private static final String JSP_PORTAL = "jsp/site/Portal.jsp";
 
     /** The Constant TEMPLATE_ACTIONS. */
-    private static final String                TEMPLATE_ACTIONS               = "skin/plugins/signalement/modules/rest/managewithoutws/manage_actions.html";
+    private static final String TEMPLATE_ACTIONS = "skin/plugins/signalement/modules/rest/managewithoutws/manage_actions.html";
 
     /** The Constant MARK_LOCALE. */
-    private static final String                MARK_LOCALE                    = "locale";
+    private static final String MARK_LOCALE = "locale";
 
     /** The Constant MARK_MOTIFS. */
-    private static final String                MARK_MOTIFS                    = "motifs";
+    private static final String MARK_MOTIFS = "motifs";
 
     /** The Constant MARK_ID. */
-    private static final String                MARK_ID                        = "id";
+    private static final String MARK_ID = "id";
 
     /** The Constant MARK_ACTION. */
-    private static final String                MARK_ACTION                    = "action";
+    private static final String MARK_ACTION = "action";
 
     /** The Constant MARK_TYPE_LIST. */
-    private static final String                MARK_TYPE_LIST                 = "type_list";
+    private static final String MARK_TYPE_LIST = "type_list";
 
     /** The Constant MARK_TYPE. */
-    private static final String                MARK_TYPE                      = "type";
+    private static final String MARK_TYPE = "type";
 
     /** The Constant MARK_ERROR. */
-    private static final String                MARK_ERROR                     = "error";
+    private static final String MARK_ERROR = "error";
 
     /** The Constant MARK_HAS_EMAIL_SIGNALEUR. */
-    private static final String                MARK_HAS_EMAIL_SIGNALEUR       = "has_email_signaleur";
+    private static final String MARK_HAS_EMAIL_SIGNALEUR = "has_email_signaleur";
 
     /** The Constant PARAMETER_PAGE. */
-    private static final String                PARAMETER_PAGE                 = "page";
+    private static final String PARAMETER_PAGE = "page";
 
     /** The Constant PARAMETER_SUIVI. */
-    private static final String                PARAMETER_SUIVI                = "suivi";
+    private static final String PARAMETER_SUIVI = "suivi";
 
     /** The Constant PARAMETER_TOKEN. */
-    private static final String                PARAMETER_TOKEN                = "token";
+    private static final String PARAMETER_TOKEN = "token";
 
     /** The Constant PARAMETER_MOTIF_REJET. */
-    private static final String                PARAMETER_MOTIF_REJET          = "motif_rejet";
+    private static final String PARAMETER_MOTIF_REJET = "motif_rejet";
 
     /** The Constant PARAMETER_MOTIF_AUTRE_CHECKBOX. */
-    private static final String                PARAMETER_MOTIF_AUTRE_CHECKBOX = "motif_autre_checkbox";
+    private static final String PARAMETER_MOTIF_AUTRE_CHECKBOX = "motif_autre_checkbox";
 
     /** The Constant PARAMETER_MOTIF_AUTRE. */
-    private static final String                PARAMETER_MOTIF_AUTRE          = "motif_autre";
+    private static final String PARAMETER_MOTIF_AUTRE = "motif_autre";
 
     /** The Constant PARAMETER_ID_TYPE_ANOMALIE. */
-    private static final String                PARAMETER_ID_TYPE_ANOMALIE     = "typeSignalementSelect";
+    private static final String PARAMETER_ID_TYPE_ANOMALIE = "typeSignalementSelect";
 
     /** The Constant PARAMETER_PHOTO_DONE. */
-    private static final String                PARAMETER_PHOTO_DONE           = "photoDone";
+    private static final String PARAMETER_PHOTO_DONE = "photoDone";
 
     /** The Constant PARAMETER_CHOSEN_MESSAGE. */
-    private static final String                PARAMETER_CHOSEN_MESSAGE       = "chosenMessage";
+    private static final String PARAMETER_CHOSEN_MESSAGE = "chosenMessage";
 
     /** The Constant I18N_ERROR_MOTIF_REJET. */
-    private static final String                I18N_ERROR_MOTIF_REJET         = "module.dansmarue.rest.manage.signalement.error.motif.rejet";
+    private static final String I18N_ERROR_MOTIF_REJET = "module.dansmarue.rest.manage.signalement.error.motif.rejet";
 
     /** The Constant I18N_ERROR_PROGRAMMATION_DATE. */
-    private static final String                I18N_ERROR_PROGRAMMATION_DATE  = "module.dansmarue.rest.manage.signalement.error.programmation.date";
+    private static final String I18N_ERROR_PROGRAMMATION_DATE = "module.dansmarue.rest.manage.signalement.error.programmation.date";
 
     /** The Constant I18N_ERROR_TYPE_ANOMALIE. */
-    private static final String                I18N_ERROR_TYPE_ANOMALIE       = "module.dansmarue.rest.manage.signalement.error.type.anomalie";
+    private static final String I18N_ERROR_TYPE_ANOMALIE = "module.dansmarue.rest.manage.signalement.error.type.anomalie";
 
     /** The Constant I18N_ERROR_NO_SIGNALEMENT. */
-    private static final String                I18N_ERROR_NO_SIGNALEMENT      = "module.dansmarue.rest.manage.signalement.error.no.signalement";
+    private static final String I18N_ERROR_NO_SIGNALEMENT = "module.dansmarue.rest.manage.signalement.error.no.signalement";
 
     /** The Constant I18N_ERROR_MANDATORY_ACTION. */
-    private static final String                I18N_ERROR_MANDATORY_ACTION    = "module.dansmarue.rest.manage.signalement.actions.aide";
+    private static final String I18N_ERROR_MANDATORY_ACTION = "module.dansmarue.rest.manage.signalement.actions.aide";
 
     /** The Constant I18N_TITLE. */
-    private static final String                I18N_TITLE                     = "module.dansmarue.rest.manage.signalement.gestion.title";
+    private static final String I18N_TITLE = "module.dansmarue.rest.manage.signalement.gestion.title";
 
     /** The Constant I18N_SUCCESS. */
-    private static final String                I18N_SUCCESS                   = "module.dansmarue.rest.manage.signalement.success";
+    private static final String I18N_SUCCESS = "module.dansmarue.rest.manage.signalement.success";
 
     /** The signalement service. */
-    private transient ISignalementService      _signalementService            = SpringContextService.getBean( "signalementService" );
+    private transient ISignalementService _signalementService = SpringContextService.getBean( "signalementService" );
 
     /** The observation rejet service. */
-    private transient IObservationRejetService _observationRejetService       = SpringContextService.getBean( "observationRejetService" );
+    private transient IObservationRejetService _observationRejetService = SpringContextService.getBean( "observationRejetService" );
 
     /** The manage signalement service. */
-    private transient ManageSignalementService _manageSignalementService      = SpringContextService.getBean( "signalement-rest.manageSignalementService" );
+    private transient ManageSignalementService _manageSignalementService = SpringContextService.getBean( "signalement-rest.manageSignalementService" );
 
     /** The type signalement service. */
-    private transient ITypeSignalementService  _typeSignalementService        = SpringContextService.getBean( "typeSignalementService" );
+    private transient ITypeSignalementService _typeSignalementService = SpringContextService.getBean( "typeSignalementService" );
 
     /** The signalement workflow service. */
-    private transient IWorkflowService         _signalementWorkflowService    = SpringContextService.getBean( "signalement.workflowService" );
+    private transient IWorkflowService _signalementWorkflowService = SpringContextService.getBean( "signalement.workflowService" );
 
     /** The dansmarue upload handler. */
-    private transient DansMaRueUploadHandler   _dansmarueUploadHandler        = SpringContextService.getBean( "signalement-rest.dansmarueUploadHandler" );
+    private transient DansMaRueUploadHandler _dansmarueUploadHandler = SpringContextService.getBean( "signalement-rest.dansmarueUploadHandler" );
 
     /** The task service. */
     @Inject
-    private ITaskService                       _taskService;
+    private ITaskService _taskService;
 
     /** The action service. */
     @Inject
-    private IActionService                     _actionService;
+    private IActionService _actionService;
 
     /** The state service. */
     @Inject
-    private IStateService                      _stateService;
+    private IStateService _stateService;
 
     /**
      * {@inheritDoc}
@@ -235,70 +235,77 @@ public class ManageSignalementApp implements XPageApplication
 
         }
         // else, validate or not the action
-        else if ( bean != null )
-        {
-            String error = validateForm( request );
-            if ( StringUtils.isBlank( error ) )
+        else
+            if ( bean != null )
             {
-                // Vidage du motif autre si checkbox non cochée
-                boolean motifAutreCheckbox = StringUtils.isNotBlank( request.getParameter( PARAMETER_MOTIF_AUTRE_CHECKBOX ) );
-                String motifAutre = StringUtils.EMPTY;
-                if ( motifAutreCheckbox )
+                String error = validateForm( request );
+                if ( StringUtils.isBlank( error ) )
                 {
-                    motifAutre = request.getParameter( PARAMETER_MOTIF_AUTRE );
-                }
+                    // Vidage du motif autre si checkbox non cochée
+                    boolean motifAutreCheckbox = StringUtils.isNotBlank( request.getParameter( PARAMETER_MOTIF_AUTRE_CHECKBOX ) );
+                    String motifAutre = StringUtils.EMPTY;
+                    if ( motifAutreCheckbox )
+                    {
+                        motifAutre = request.getParameter( PARAMETER_MOTIF_AUTRE );
+                    }
 
-                String stridTypeAnomalie = request.getParameter( PARAMETER_ID_TYPE_ANOMALIE );
-                long idTypeAnomalie = StringUtils.isNotBlank( stridTypeAnomalie ) ? Long.parseLong( stridTypeAnomalie ) : -1;
+                    String stridTypeAnomalie = request.getParameter( PARAMETER_ID_TYPE_ANOMALIE );
+                    long idTypeAnomalie = StringUtils.isNotBlank( stridTypeAnomalie ) ? Long.parseLong( stridTypeAnomalie ) : -1;
 
-                FileItem imageFile = _dansmarueUploadHandler.getFile( request, PARAMETER_PHOTO_DONE );
+                    FileItem imageFile = _dansmarueUploadHandler.getFile( request, PARAMETER_PHOTO_DONE );
 
-                request.getSession( ).setAttribute( PARAMETER_CHOSEN_MESSAGE, request.getParameter( PARAMETER_CHOSEN_MESSAGE ) );
+                    request.getSession( ).setAttribute( PARAMETER_CHOSEN_MESSAGE, request.getParameter( PARAMETER_CHOSEN_MESSAGE ) );
 
-                error = _manageSignalementService.processAction( request, action, bean, request.getParameter( "commentaires" ), request.getParameterValues( PARAMETER_MOTIF_REJET ), motifAutre,
-                        request.getParameter( "dateProgrammation" ), idTypeAnomalie, imageFile );
-                if ( StringUtils.isNotBlank( error ) )
-                {
-                    model.put( MARK_ERROR, error );
+                    error = _manageSignalementService.processAction( request, action, bean, request.getParameter( "commentaires" ),
+                            request.getParameterValues( PARAMETER_MOTIF_REJET ), motifAutre, request.getParameter( "dateProgrammation" ), idTypeAnomalie,
+                            imageFile );
+                    if ( StringUtils.isNotBlank( error ) )
+                    {
+                        model.put( MARK_ERROR, error );
+                    }
+                    else
+                    {
+                        if ( _dansmarueUploadHandler.hasFile( request, PARAMETER_PHOTO_DONE ) )
+                        {
+                            _dansmarueUploadHandler.removeFileItem( PARAMETER_PHOTO_DONE, request.getSession( ), 0 );
+                        }
+
+                        UrlItem urlItem;
+
+                        urlItem = new UrlItem( AppPropertiesService.getProperty( PROPERTY_BASE_URL ) + JSP_PORTAL );
+
+                        urlItem.addParameter( PARAMETER_PAGE, PARAMETER_SUIVI );
+                        urlItem.addParameter( PARAMETER_TOKEN, bean.getToken( ) );
+
+                        String link = "<a href=\"" + urlItem.getUrl( ) + "\" >LIEN_CONSULTATION</a>";
+                        model.put( "success", I18nService.getLocalizedString( I18N_SUCCESS, new String [ ] {
+                                link
+                        }, request.getLocale( ) ) );
+                    }
                 }
                 else
                 {
-                    if ( _dansmarueUploadHandler.hasFile( request, PARAMETER_PHOTO_DONE ) )
-                    {
-                        _dansmarueUploadHandler.removeFileItem( PARAMETER_PHOTO_DONE, request.getSession( ), 0 );
-                    }
-
-                    UrlItem urlItem;
-
-                    urlItem = new UrlItem( AppPropertiesService.getProperty( PROPERTY_BASE_URL ) + JSP_PORTAL );
-
-                    urlItem.addParameter( PARAMETER_PAGE, PARAMETER_SUIVI );
-                    urlItem.addParameter( PARAMETER_TOKEN, bean.getToken( ) );
-
-                    String link = "<a href=\"" + urlItem.getUrl( ) + "\" >LIEN_CONSULTATION</a>";
-                    model.put( "success", I18nService.getLocalizedString( I18N_SUCCESS, new String[] { link }, request.getLocale( ) ) );
+                    model.put( MARK_ERROR, error );
                 }
             }
             else
             {
-                model.put( MARK_ERROR, error );
+                model.put( MARK_ERROR, I18nService.getLocalizedString( I18N_ERROR_NO_SIGNALEMENT, request.getLocale( ) ) );
             }
-        }
-        else
-        {
-            model.put( MARK_ERROR, I18nService.getLocalizedString( I18N_ERROR_NO_SIGNALEMENT, request.getLocale( ) ) );
-        }
 
         // Récupération des messages de service fait
-        Map<Integer, List<NotificationSignalementUserMultiContents>> allMessagesServiceFait = _signalementWorkflowService.selectMessageServiceFaitPresta( action );
+        Map<Integer, List<NotificationSignalementUserMultiContents>> allMessagesServiceFait = _signalementWorkflowService
+                .selectMessageServiceFaitPresta( action );
 
         if ( ( state != null ) && ( state.getId( ) == AppPropertiesService.getPropertyInt( "signalement.idStateTransferePrestataire", -1 ) ) )
         {
-            model.put( "messagesServiceFait", allMessagesServiceFait.get( AppPropertiesService.getPropertyInt( "signalement.idTaskTransferePrestataireNotifMultiContents", -1 ) ) );
+            model.put( "messagesServiceFait",
+                    allMessagesServiceFait.get( AppPropertiesService.getPropertyInt( "signalement.idTaskTransferePrestataireNotifMultiContents", -1 ) ) );
         }
         else
         {
-            model.put( "messagesServiceFait", allMessagesServiceFait.get( AppPropertiesService.getPropertyInt( "signalement.idTaskServiceProgrammePrestataireNotifMultiContents", -1 ) ) );
+            model.put( "messagesServiceFait", allMessagesServiceFait
+                    .get( AppPropertiesService.getPropertyInt( "signalement.idTaskServiceProgrammePrestataireNotifMultiContents", -1 ) ) );
         }
 
         model.put( _dansmarueUploadHandler.getHandlerName( ), _dansmarueUploadHandler );
@@ -329,57 +336,61 @@ public class ManageSignalementApp implements XPageApplication
         {
             error = I18nService.getLocalizedString( I18N_ERROR_MANDATORY_ACTION, request.getLocale( ) );
         }
-        else if ( ManageSignalementService.ACTION_REJETER.equals( action ) )
-        {
-            String[] motifsRejetIds = request.getParameterValues( PARAMETER_MOTIF_REJET );
-            String hasEmailSignaleur = request.getParameter( MARK_HAS_EMAIL_SIGNALEUR );
-            boolean motifAutreCheckbox = StringUtils.isNotBlank( request.getParameter( PARAMETER_MOTIF_AUTRE_CHECKBOX ) );
-
-            boolean emptyMotif = ArrayUtils.isEmpty( motifsRejetIds );
-
-            if ( emptyMotif && !motifAutreCheckbox && ( hasEmailSignaleur != null ) )
+        else
+            if ( ManageSignalementService.ACTION_REJETER.equals( action ) )
             {
-                return I18nService.getLocalizedString( I18N_ERROR_MOTIF_REJET, request.getLocale( ) );
-            }
+                String [ ] motifsRejetIds = request.getParameterValues( PARAMETER_MOTIF_REJET );
+                String hasEmailSignaleur = request.getParameter( MARK_HAS_EMAIL_SIGNALEUR );
+                boolean motifAutreCheckbox = StringUtils.isNotBlank( request.getParameter( PARAMETER_MOTIF_AUTRE_CHECKBOX ) );
 
-            // Vérification si les motifs sont valides
-            if ( !emptyMotif )
-            {
-                List<ObservationRejet> observationList = _observationRejetService.getAllObservationRejetActif( );
-                List<ObservationRejet> motifsRejet = new ArrayList<>( );
-                for ( ObservationRejet observation : observationList )
-                {
-                    for ( String motifRejetId : motifsRejetIds )
-                    {
-                        Integer motifRejetInt = Integer.parseInt( motifRejetId );
-                        if ( observation.getActif( ) && observation.getId( ).equals( motifRejetInt ) )
-                        {
-                            motifsRejet.add( observation );
-                        }
-                    }
-                }
+                boolean emptyMotif = ArrayUtils.isEmpty( motifsRejetIds );
 
-                if ( CollectionUtils.isEmpty( motifsRejet ) )
+                if ( emptyMotif && !motifAutreCheckbox && ( hasEmailSignaleur != null ) )
                 {
                     return I18nService.getLocalizedString( I18N_ERROR_MOTIF_REJET, request.getLocale( ) );
                 }
-            }
-            String motifAutre = request.getParameter( PARAMETER_MOTIF_AUTRE );
-            if ( motifAutreCheckbox && StringUtils.isBlank( motifAutre ) )
-            {
-                return I18nService.getLocalizedString( I18N_ERROR_MOTIF_REJET, request.getLocale( ) );
-            }
 
-        }
-        else if ( ManageSignalementService.ACTION_PROGRAMMER.equals( action ) && StringUtils.isBlank( request.getParameter( "dateProgrammation" ) ) )
-        {
-            error = I18nService.getLocalizedString( I18N_ERROR_PROGRAMMATION_DATE, request.getLocale( ) );
-        }
-        else if ( ManageSignalementService.ACTION_REQUALIFIER.equals( action ) && StringUtils.isBlank( request.getParameter( PARAMETER_ID_TYPE_ANOMALIE ) ) )
-        {
+                // Vérification si les motifs sont valides
+                if ( !emptyMotif )
+                {
+                    List<ObservationRejet> observationList = _observationRejetService.getAllObservationRejetActif( );
+                    List<ObservationRejet> motifsRejet = new ArrayList<>( );
+                    for ( ObservationRejet observation : observationList )
+                    {
+                        for ( String motifRejetId : motifsRejetIds )
+                        {
+                            Integer motifRejetInt = Integer.parseInt( motifRejetId );
+                            if ( observation.getActif( ) && observation.getId( ).equals( motifRejetInt ) )
+                            {
+                                motifsRejet.add( observation );
+                            }
+                        }
+                    }
 
-            error = I18nService.getLocalizedString( I18N_ERROR_TYPE_ANOMALIE, request.getLocale( ) );
-        }
+                    if ( CollectionUtils.isEmpty( motifsRejet ) )
+                    {
+                        return I18nService.getLocalizedString( I18N_ERROR_MOTIF_REJET, request.getLocale( ) );
+                    }
+                }
+                String motifAutre = request.getParameter( PARAMETER_MOTIF_AUTRE );
+                if ( motifAutreCheckbox && StringUtils.isBlank( motifAutre ) )
+                {
+                    return I18nService.getLocalizedString( I18N_ERROR_MOTIF_REJET, request.getLocale( ) );
+                }
+
+            }
+            else
+                if ( ManageSignalementService.ACTION_PROGRAMMER.equals( action ) && StringUtils.isBlank( request.getParameter( "dateProgrammation" ) ) )
+                {
+                    error = I18nService.getLocalizedString( I18N_ERROR_PROGRAMMATION_DATE, request.getLocale( ) );
+                }
+                else
+                    if ( ManageSignalementService.ACTION_REQUALIFIER.equals( action )
+                            && StringUtils.isBlank( request.getParameter( PARAMETER_ID_TYPE_ANOMALIE ) ) )
+                    {
+
+                        error = I18nService.getLocalizedString( I18N_ERROR_TYPE_ANOMALIE, request.getLocale( ) );
+                    }
 
         return error;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,7 +51,6 @@ import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import net.sf.json.JSONObject;
 
-
 /**
  * ISignalementRestService.
  */
@@ -84,7 +83,8 @@ public interface ISignalementRestService
     /**
      * This request is used to get an incident by its identifier.
      *
-     * @param jsonSrc            json stream
+     * @param jsonSrc
+     *            json stream
      * @return json response
      */
     String getIncidentsById( JSONObject jsonSrc );
@@ -110,7 +110,8 @@ public interface ISignalementRestService
     String saveIncident( JSONObject jsonSrc ) throws ParseSignalementFromJSONException;
 
     /**
-     * This request is sent by the application to get the list of all the ongoing incidents that user has created, updated and all the incidents the user declared as resolved.
+     * This request is sent by the application to get the list of all the ongoing incidents that user has created, updated and all the incidents the user
+     * declared as resolved.
      *
      * @param jsonSrc
      *            json stream
@@ -119,7 +120,8 @@ public interface ISignalementRestService
     String getReports( JSONObject jsonSrc );
 
     /**
-     * This request is sent to update an existing incident. This update of the incident means to change the state of the incident. Addnd a new picture is done by an other interface and request.
+     * This request is sent to update an existing incident. This update of the incident means to change the state of the incident. Addnd a new picture is done
+     * by an other interface and request.
      *
      * @param jsonSrc
      *            json stream
@@ -130,7 +132,8 @@ public interface ISignalementRestService
     String updateIncident( JSONObject jsonSrc, HttpServletRequest request );
 
     /**
-     * This request is sent to get all activities around an user. An activity can be: add a picture to one incident, confirm an incident... And an incident can have many activities.
+     * This request is sent to get all activities around an user. An activity can be: add a picture to one incident, confirm an incident... And an incident can
+     * have many activities.
      *
      * @param jsonSrc
      *            json stream
@@ -170,7 +173,8 @@ public interface ISignalementRestService
     /**
      * Get list of categorie.
      *
-     * @param jsonSrc            json stream
+     * @param jsonSrc
+     *            json stream
      * @return json response
      */
     String getCategoriesList( JSONObject jsonSrc );
@@ -178,8 +182,10 @@ public interface ISignalementRestService
     /**
      * Send incident pictures.
      *
-     * @param request            the http request
-     * @param requestBodyStream            the input stream
+     * @param request
+     *            the http request
+     * @param requestBodyStream
+     *            the input stream
      * @return json response
      */
     String updatePictureIncident( HttpServletRequest request, InputStream requestBodyStream );
@@ -187,9 +193,10 @@ public interface ISignalementRestService
     /**
      * Save report for blackBerry.
      *
-     * @param signalement            the report
+     * @param signalement
+     *            the report
      * @return answer
-     * @deprecated 
+     * @deprecated
      */
     @Deprecated
     String doSaveIncidentForBlackBerry( Signalement signalement );
@@ -236,7 +243,7 @@ public interface ISignalementRestService
      *            longitude lambert.
      * @return geom coordinate
      */
-    Double[] getGeomFromLambertToWgs84( Double dLatLambert, Double dLngLambert );
+    Double [ ] getGeomFromLambertToWgs84( Double dLatLambert, Double dLngLambert );
 
     /**
      * Gets the geom from lambert 93 to wgs 84.
@@ -247,7 +254,7 @@ public interface ISignalementRestService
      *            the d lng lambert
      * @return the geom from lambert 93 to wgs 84
      */
-    Double[] getGeomFromLambert93ToWgs84( Double dLatLambert, Double dLngLambert );
+    Double [ ] getGeomFromLambert93ToWgs84( Double dLatLambert, Double dLngLambert );
 
     /**
      * Find all reports in perimeter.

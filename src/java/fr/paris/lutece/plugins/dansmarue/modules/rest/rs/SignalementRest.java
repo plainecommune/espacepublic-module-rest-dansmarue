@@ -1162,41 +1162,6 @@ public class SignalementRest
     }
 
     /**
-     * Gets the dossiers courrants by geom with limit.
-     *
-     * @param parameters
-     *            the request parameter
-     * @return current folder.
-     */
-    @POST
-    @Consumes( {
-            MediaType.APPLICATION_JSON
-    } )
-    @Produces( {
-            MediaType.APPLICATION_JSON + ";charset=utf-8"
-    } )
-    @Path( "getDossiersCourrantsByGeomWithLimit" )
-    public String getDossiersCourrantsByGeomWithLimit( String parameters )
-    {
-
-        JSONObject object;
-        try
-        {
-            object = new ObjectMapper( ).readValue( parameters, JSONObject.class );
-            Double longitude = object.getDouble( "longitude" );
-            Double latitude = object.getDouble( "latitude" );
-
-            return _signalementRestService.getDossiersCourrantsByGeomWithLimit( longitude, latitude );
-        }
-        catch( IOException e )
-        {
-            AppLogService.error( e );
-            return formatJsonError( SignalementRestConstants.ERROR_BAD_JSON_REQUEST, e.getMessage( ) );
-        }
-
-    }
-
-    /**
      * Format a error.
      *
      * @param errorCode

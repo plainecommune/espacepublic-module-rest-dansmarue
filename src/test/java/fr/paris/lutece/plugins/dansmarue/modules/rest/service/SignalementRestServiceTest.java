@@ -162,10 +162,6 @@ public class SignalementRestServiceTest
     @Mock
     IWorkflowService _signalementWorkflowService;
 
-    /** The ramen client service. */
-    @Mock
-    RamenClientService _ramenClientService;
-
     /** The priorite service. */
     @Mock
     IPrioriteService _prioriteService;

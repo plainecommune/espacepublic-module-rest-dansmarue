@@ -555,12 +555,6 @@ public final class SignalementRestConstants
     /** The Constant PROPERTY_RADIUS. */
     public static final String PROPERTY_RADIUS = "signalement-rest.radius.parameter";
 
-    /** The Constant PROPERTY_URL_RAMEN_REST. */
-    public static final String PROPERTY_URL_RAMEN_REST = "signalement-rest.url.ramen.rest";
-
-    /** The Constant PROPERTY_URL_RAMEN_REST_GEO_WITH_LIMIT. */
-    public static final String PROPERTY_URL_RAMEN_REST_GEO_WITH_LIMIT = "signalement-rest.url.ramen.rest.geo.withLimit";
-
     /** The Constant PROPERTY_DEFAULT_EMAIL. */
     public static final String PROPERTY_DEFAULT_EMAIL = "signalement-rest.default.email";
 
@@ -570,8 +564,6 @@ public final class SignalementRestConstants
     /** The Constant PROPERTY_INCIDENT_SOURCE_DMR. */
     public static final String PROPERTY_INCIDENT_SOURCE_DMR = "signalement-rest.source.dansmarue";
 
-    /** The Constant PROPERTY_INCIDENT_SOURCE_RAMEN. */
-    public static final String PROPERTY_INCIDENT_SOURCE_RAMEN = "signalement-rest.source.ramen";
     public static final String ERROR_GET_SIG_BY_NUMBER_NOT_FOUND = "signalement-rest.error.getSigByNumberNotFound";
     public static final String ERROR_GET_SIG_BY_NUMBER_TOO_OLD = "signalement-rest.error.getSigByNumberTooOld";
 

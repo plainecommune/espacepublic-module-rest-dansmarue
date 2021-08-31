@@ -7,15 +7,15 @@
     <version>5.0.2</version>
   </parent>
   <groupId>fr.paris.lutece.plugins</groupId>
-  <artifactId>module-dansmarue-rest</artifactId>
-  <version>6.6.8-SNAPSHOT</version>
+  <artifactId>module-bienvu-rest</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
   <packaging>lutece-plugin</packaging>
-  <name>Lutece dansmarue rest module</name>
-  <url>https://dev.lutece.paris.fr/gitlab/tmma/r59/module-signalement-rest</url>
+  <name>Lutece bien VU rest module</name>
+  <url>https://github.com/bienVU-PCO/espacepublic-plugin-dansmarue</url>
   <scm>
-    <connection>scm:git:https://dev.lutece.paris.fr/gitlab/tmma/r59/module-signalement-rest.git</connection>
-    <developerConnection>scm:git:https://dev.lutece.paris.fr/gitlab/tmma/r59/module-signalement-rest.git</developerConnection>
-    <url>https://dev.lutece.paris.fr/gitlab/tmma/r59/module-signalement-rest</url>
+    <connection>scm:git:https://github.com/bienVU-PCO/espacepublic-module-rest-dansmarue.git</connection>
+    <developerConnection>scm:git:https://github.com/bienVU-PCO/espacepublic-module-rest-dansmarue.git</developerConnection>
+    <url>https://github.com/bienVU-PCO/espacepublic-plugin-dansmarue</url>
     <tag>HEAD</tag>
   </scm>
   <properties>
@@ -53,8 +53,8 @@
     </dependency>
     <dependency>
       <groupId>fr.paris.lutece.plugins</groupId>
-      <artifactId>plugin-dansmarue</artifactId>
-      <version>[6.0.99,)</version>
+      <artifactId>plugin-bienvu</artifactId>
+      <version>[0.0.1-SNAPSHOT,)</version>
       <exclusions>
         <exclusion>
           <artifactId>lutece-core</artifactId>

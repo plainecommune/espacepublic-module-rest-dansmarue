@@ -244,19 +244,10 @@ public class SiraRestConstants
 
     /** The Constant JSON_TAG_ERROR_MESSAGE. */
     public static final String JSON_TAG_ERROR_MESSAGE = "error_message";
-
-    /** The Constant REQUEST_TYPE_ENCOMBRANTS. */
     // REQUEST TYPES
-    public static final String REQUEST_TYPE_ENCOMBRANTS = "ramenTypesEncombrants";
 
     /** The Constant REQUEST_ENTITY_HIERARCHY. */
     public static final String REQUEST_ENTITY_HIERARCHY = "entityHierarchy";
-
-    /** The Constant REQUEST_FEUILLE_DE_ROUTE. */
-    public static final String REQUEST_FEUILLE_DE_ROUTE = "ramenFeuilleDeRoute";
-
-    /** The Constant REQUEST_RAMEN_POSTER_FAIT. */
-    public static final String REQUEST_RAMEN_POSTER_FAIT = "ramenPosterFait";
 
     /** The Constant JSON_TAG_DOSSIER_LIST. */
     public static final String JSON_TAG_DOSSIER_LIST = "dossierList";
@@ -326,12 +317,6 @@ public class SiraRestConstants
     /** The Constant JSON_TAG_ENCOMBRANT_FORBIDDEN. */
     public static final String JSON_TAG_ENCOMBRANT_FORBIDDEN = "isForbidden";
 
-    /** The Constant JSON_TAG_RAMEN_TYPES_LIST. */
-    public static final String JSON_TAG_RAMEN_TYPES_LIST = "RamentypesList";
-
-    /** The Constant JSON_TAG_RAMEN_TYPE_OBJET. */
-    public static final String JSON_TAG_RAMEN_TYPE_OBJET = "ramenType";
-
     /** The Constant JSON_TAG_ENCOMBRANT_QUANTITY. */
     public static final String JSON_TAG_ENCOMBRANT_QUANTITY = "quantity";
 
@@ -371,13 +356,8 @@ public class SiraRestConstants
 
     /** The Constant PARAMETER_NOMENCLATURE_RAMEN. */
     public static final String PARAMETER_NOMENCLATURE_RAMEN = "nomenclature";
-
-    /** The Constant PROPERTY_DEFAULT_CATEGORY_ID. */
+    
     // PROPERTIES
-    public static final String PROPERTY_DEFAULT_CATEGORY_ID = "ramen-rest.default.category.id";
-
-    /** The Constant PROPERTY_DESCRIPTION_MESSAGE_DOSSIER. */
-    public static final String PROPERTY_DESCRIPTION_MESSAGE_DOSSIER = "ramen-rest.description.dossier";
 
     /** The Constant PROPERTY_PRIVATE_KEY_ANDROID_API. */
     public static final String PROPERTY_PRIVATE_KEY_ANDROID_API = "signalement-rest.private.key.android_api";

@@ -9,7 +9,6 @@
 		<property name="sha1HashService" ref="signalement-rest.sha1HashService" />
     </bean>
     <bean id="signalement-rest.sha1HashService"  class="fr.paris.lutece.util.signrequest.security.Sha1HashService" />
-    <bean id="signalement-rest.ramenClientService" class="fr.paris.lutece.plugins.dansmarue.modules.rest.service.RamenClientService" />
 	<bean id="signalement-rest.manageSignalementService" class="fr.paris.lutece.plugins.dansmarue.modules.rest.service.ManageSignalementService"/>	
 	<!-- REST -->
     <bean id="signalement-rest.signalementRest" class="fr.paris.lutece.plugins.dansmarue.modules.rest.rs.SignalementRest">

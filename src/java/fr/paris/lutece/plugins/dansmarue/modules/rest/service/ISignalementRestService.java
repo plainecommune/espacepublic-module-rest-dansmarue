@@ -343,17 +343,6 @@ public interface ISignalementRestService
     void addFollower( Long signalementId, String guid, String strUDID, String email, String device, String userToken, boolean createUser );
 
     /**
-     * Get current folder.
-     *
-     * @param longitude
-     *            longitude
-     * @param latitude
-     *            latitude
-     * @return current folder
-     */
-    String getDossiersCourrantsByGeomWithLimit( Double longitude, Double latitude );
-
-    /**
      * Save a report.
      *
      * @param demandeSignalement

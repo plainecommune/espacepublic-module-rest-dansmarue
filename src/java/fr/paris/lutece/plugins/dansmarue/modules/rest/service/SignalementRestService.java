@@ -505,8 +505,7 @@ public class SignalementRestService implements ISignalementRestService
 
         String source = jsonSrc.getString( SignalementRestConstants.JSON_TAG_INCIDENT_SOURCE );
         String sourceDMR = AppPropertiesService.getProperty( SignalementRestConstants.PROPERTY_INCIDENT_SOURCE_DMR );
-        String sourceRamen = AppPropertiesService.getProperty( SignalementRestConstants.PROPERTY_INCIDENT_SOURCE_RAMEN );
-        if ( !StringUtils.equals( source, sourceDMR ) && !StringUtils.equals( source, sourceRamen ) )
+        if ( !StringUtils.equals( source, sourceDMR ) )
         {
             ErrorSignalement error = new ErrorSignalement( );
             error.setErrorCode( SignalementRestConstants.ERROR_BAD_SOURCE );
@@ -2951,18 +2950,6 @@ public class SignalementRestService implements ISignalementRestService
     public void addFollower( Long signalementId, String guid, String strUDID, String email, String device, String userToken, boolean createUser )
     {
         _signalementService.addFollower( signalementId, guid, strUDID, email, device, userToken, createUser );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getDossiersCourrantsByGeomWithLimit( Double longitude, Double latitude )
-    {
-        RamenClientService ramenClientService = SpringContextService.getBean( "signalement-rest.ramenClientService" );
-
-        return ramenClientService.getDossiersCourrantsByGeommWithLimit( longitude, latitude );
-
     }
 
     /**

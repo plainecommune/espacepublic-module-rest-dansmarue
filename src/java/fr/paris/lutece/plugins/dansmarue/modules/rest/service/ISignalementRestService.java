@@ -365,5 +365,15 @@ public interface ISignalementRestService
      * @return lis of action
      */
     Collection<Action> getListActionsByIdSignalementAndUser( int nIdSignalement, AdminUser user );
+    
+    /**
+     * Check if email is agent's one
+     * 
+     * @param strRequest
+     *      the json stream sended by request
+     * @return the answer to request
+     *  
+     */
+    String checkMailAgent( JSONObject json );
 
 }

@@ -337,14 +337,18 @@ public class SignalementRestService implements ISignalementRestService
                                                                                     {
                                                                                         strRespons = checkVersion( );
                                                                                     }
-                                                                                    else
-                                                                                    {
-                                                                                        ErrorSignalement error = new ErrorSignalement( );
-                                                                                        error.setErrorCode( SignalementRestConstants.ERROR_BAD_JSON_REQUEST );
-                                                                                        error.setErrorMessage( StringUtils.EMPTY );
-
-                                                                                        return formatterJson.format( error );
-                                                                                    }
+                                                                                    else if( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_IS_MAIL_AGENT ) )
+                                                                                        {
+                                                                                            strRespons = checkMailAgent( json );
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            ErrorSignalement error = new ErrorSignalement( );
+                                                                                            error.setErrorCode( SignalementRestConstants.ERROR_BAD_JSON_REQUEST );
+                                                                                            error.setErrorMessage( StringUtils.EMPTY );
+    
+                                                                                            return formatterJson.format( error );
+                                                                                        }
 
             JSONArray jsonArrayRespons = new JSONArray( );
             jsonArrayRespons.element( strRespons );
@@ -3197,6 +3201,46 @@ public class SignalementRestService implements ISignalementRestService
             JSONObject jsonData = new JSONObject( );
             jsonData.accumulate( SignalementRestConstants.JSON_TAG_STATUS, 0 );
             jsonData.accumulate( SignalementRestConstants.JSON_TAG_USER, userJson );
+            jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonData );
+            return jsonAnswer.toString( );
+        }
+        catch( JSONException e )
+        {
+            AppLogService.error( e.getMessage( ), e );
+            ErrorSignalement error = new ErrorSignalement( );
+            error.setErrorCode( SignalementRestConstants.ERROR_BAD_JSON_REQUEST );
+            error.setErrorMessage( e.getMessage( ) );
+            return formatterJson.format( error );
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String checkMailAgent( JSONObject json ) {
+        IFormatter<ErrorSignalement> formatterJson = new ErrorSignalementFormatterJson( );
+        boolean res = false;
+        try
+        {
+            String email = json.getString( SignalementRestConstants.JSON_TAG_EMAIL );
+            if ( StringUtils.isBlank( email ) )
+            {
+                ErrorSignalement error = new ErrorSignalement( );
+                error.setErrorCode( SignalementRestConstants.ERROR_BAD_USER_EMAIL );
+                error.setErrorMessage( StringUtils.EMPTY );
+                return formatterJson.format( error );
+            }
+            
+            String[] listDomain = getEmailDomainAccept( );
+            
+            for(String domain : listDomain) {
+                if( email.contains( domain ) ) res = true;
+            }
+            
+            JSONObject jsonAnswer = new JSONObject( );
+            JSONObject jsonData = new JSONObject( );
+            jsonData.accumulate( SignalementRestConstants.JSON_TAG_STATUS, 0 );
+            jsonData.accumulate( SignalementRestConstants.JSON_TAG_IS_AGENT, res );
             jsonAnswer.accumulate( SignalementRestConstants.JSON_TAG_ANSWER, jsonData );
             return jsonAnswer.toString( );
         }

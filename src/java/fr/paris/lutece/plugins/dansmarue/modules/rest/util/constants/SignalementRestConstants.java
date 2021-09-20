@@ -469,6 +469,8 @@ public final class SignalementRestConstants
 
     /** The Constant REQUEST_TYPE_CHECK_VERSION. */
     public static final String REQUEST_TYPE_CHECK_VERSION = "checkVersion";
+    
+    public static final String REQUEST_TYPE_IS_MAIL_AGENT = "isMailAgent";
 
     /** The Constant UPDATE_STATUS_RESOLVED. */
     // UPDATING AN INCIDENT

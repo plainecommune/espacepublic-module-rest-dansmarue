@@ -338,17 +338,17 @@ public class SignalementRestService implements ISignalementRestService
                                                                                         strRespons = checkVersion( );
                                                                                     }
                                                                                     else if( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_IS_MAIL_AGENT ) )
-                                                                                        {
-                                                                                            strRespons = checkMailAgent( json );
-                                                                                        }
-                                                                                        else
-                                                                                        {
-                                                                                            ErrorSignalement error = new ErrorSignalement( );
-                                                                                            error.setErrorCode( SignalementRestConstants.ERROR_BAD_JSON_REQUEST );
-                                                                                            error.setErrorMessage( StringUtils.EMPTY );
-    
-                                                                                            return formatterJson.format( error );
-                                                                                        }
+                                                                                    {
+                                                                                        strRespons = checkMailAgent( json );
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        ErrorSignalement error = new ErrorSignalement( );
+                                                                                        error.setErrorCode( SignalementRestConstants.ERROR_BAD_JSON_REQUEST );
+                                                                                        error.setErrorMessage( StringUtils.EMPTY );
+
+                                                                                        return formatterJson.format( error );
+                                                                                    }
 
             JSONArray jsonArrayRespons = new JSONArray( );
             jsonArrayRespons.element( strRespons );
@@ -1201,7 +1201,7 @@ public class SignalementRestService implements ISignalementRestService
                                 : answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_CHOSEN_MESSAGE );
                         String emailActeur = answer.containsKey( SignalementRestConstants.JSON_TAG_EMAIL )
                                 ? answer.getString( SignalementRestConstants.JSON_TAG_EMAIL )
-                                : null;
+                                        : null;
 
                         String signalementreference = _signalementService.getSignalementReference( StringUtils.EMPTY, signalement );
 
@@ -1223,14 +1223,14 @@ public class SignalementRestService implements ISignalementRestService
                                 {
                                     motifRejetAutre = !StringUtils.isEmpty( answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_ID_REJET ) )
                                             ? answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_ID_REJET )
-                                            : StringUtils.EMPTY;
+                                                    : StringUtils.EMPTY;
                                     strDateProgrammee = StringUtils
                                             .isNotEmpty( answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_DATE_PROGRAMMATION ) )
-                                                    ? answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_DATE_PROGRAMMATION )
+                                            ? answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_DATE_PROGRAMMATION )
                                                     : StringUtils.EMPTY;
                                     long idTypeAnomalie = PARAMETER_NULL.equals( answer.getString( SignalementRestConstants.JSON_TAG_INCIDENT_TYPE_ANOMALIE ) )
                                             ? -1
-                                            : answer.getLong( SignalementRestConstants.JSON_TAG_INCIDENT_TYPE_ANOMALIE );
+                                                    : answer.getLong( SignalementRestConstants.JSON_TAG_INCIDENT_TYPE_ANOMALIE );
 
                                     request.getSession( ).setAttribute( PARAMETER_WEBSERVICE_CHOSEN_MESSAGE, chosenMessage );
 
@@ -1313,7 +1313,7 @@ public class SignalementRestService implements ISignalementRestService
                 && jsonSrc.getJSONObject( SignalementRestConstants.JSON_TAG_ANSWER ).containsKey( SignalementRestConstants.JSON_TAG_INCIDENT_COMMENT )
                 && jsonSrc.getJSONObject( SignalementRestConstants.JSON_TAG_ANSWER ).containsKey( SignalementRestConstants.JSON_TAG_INCIDENT_ID_REJET )
                 && jsonSrc.getJSONObject( SignalementRestConstants.JSON_TAG_ANSWER )
-                        .containsKey( SignalementRestConstants.JSON_TAG_INCIDENT_DATE_PROGRAMMATION )
+                .containsKey( SignalementRestConstants.JSON_TAG_INCIDENT_DATE_PROGRAMMATION )
                 && jsonSrc.getJSONObject( SignalementRestConstants.JSON_TAG_ANSWER ).containsKey( SignalementRestConstants.JSON_TAG_INCIDENT_TYPE_ANOMALIE );
     }
 
@@ -1329,8 +1329,8 @@ public class SignalementRestService implements ISignalementRestService
         String status = jsonSrc.getJSONObject( SignalementRestConstants.JSON_TAG_ANSWER ).getString( SignalementRestConstants.JSON_TAG_STATUS );
         String idTypeAnomalie = jsonSrc.getJSONObject( SignalementRestConstants.JSON_TAG_ANSWER )
                 .containsKey( SignalementRestConstants.JSON_TAG_INCIDENT_TYPE_ANOMALIE )
-                        ? jsonSrc.getJSONObject( SignalementRestConstants.JSON_TAG_ANSWER )
-                                .getString( SignalementRestConstants.JSON_TAG_INCIDENT_TYPE_ANOMALIE )
+                ? jsonSrc.getJSONObject( SignalementRestConstants.JSON_TAG_ANSWER )
+                        .getString( SignalementRestConstants.JSON_TAG_INCIDENT_TYPE_ANOMALIE )
                         : null;
 
         if ( SignalementRestConstants.JSON_TAG_ANOMALY_REQUALIFIED.equals( status ) && StringUtils.isNumeric( idTypeAnomalie ) )
@@ -2591,11 +2591,11 @@ public class SignalementRestService implements ISignalementRestService
 
         IFormatter<ErrorSignalement> formatterJsonError = new ErrorSignalementFormatterJson( );
 
-        String guid = jsonSrc.getString( SignalementRestConstants.JSON_TAG_GUID );
-        if ( StringUtils.isBlank( guid ) )
+        String email = jsonSrc.getString( SignalementRestConstants.JSON_TAG_EMAIL );
+        if ( StringUtils.isBlank( email ) )
         {
             ErrorSignalement error = new ErrorSignalement( );
-            error.setErrorCode( SignalementRestConstants.ERROR_BAD_USER_ID );
+            error.setErrorCode( SignalementRestConstants.ERROR_BAD_USER_EMAIL );
             error.setErrorMessage( StringUtils.EMPTY );
             return formatterJsonError.format( error );
         }
@@ -2603,7 +2603,7 @@ public class SignalementRestService implements ISignalementRestService
         boolean filterOnResolved = SignalementRestConstants.MOBILE_STATE_RESOLVED
                 .equals( jsonSrc.getString( SignalementRestConstants.JSON_TAG_FILTER_INCIDENT_STATUS ) );
 
-        List<Signalement> listSignalement = _signalementService.getSignalementsByGuid( guid, filterOnResolved );
+        List<Signalement> listSignalement = _signalementService.getSignalementsByEmail( email, filterOnResolved );
         List<SignalementRestDTO> listSignalementRestDTO = new ArrayList<>( );
         for ( Signalement signalement : listSignalement )
         {
@@ -3213,10 +3213,11 @@ public class SignalementRestService implements ISignalementRestService
             return formatterJson.format( error );
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public String checkMailAgent( JSONObject json ) {
         IFormatter<ErrorSignalement> formatterJson = new ErrorSignalementFormatterJson( );
         boolean res = false;
@@ -3230,13 +3231,16 @@ public class SignalementRestService implements ISignalementRestService
                 error.setErrorMessage( StringUtils.EMPTY );
                 return formatterJson.format( error );
             }
-            
+
             String[] listDomain = getEmailDomainAccept( );
-            
+
             for(String domain : listDomain) {
-                if( email.contains( domain ) ) res = true;
+                if( email.contains( domain ) )
+                {
+                    res = true;
+                }
             }
-            
+
             JSONObject jsonAnswer = new JSONObject( );
             JSONObject jsonData = new JSONObject( );
             jsonData.accumulate( SignalementRestConstants.JSON_TAG_STATUS, 0 );

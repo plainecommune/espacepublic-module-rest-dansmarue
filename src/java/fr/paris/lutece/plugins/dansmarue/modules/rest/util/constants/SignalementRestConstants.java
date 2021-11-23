@@ -865,8 +865,6 @@ public final class SignalementRestConstants
     // STATUS
     public static final String PROPERTY_ID_STATE_SERVICE_FAIT = "signalement.idStateServiceFait";
     
-    public static final String PROPERTY_EMAIL_AGENT_DOMAINE = "signalement-rest.email.agent.domaine";
-
     /**
      * Constructor.
      */

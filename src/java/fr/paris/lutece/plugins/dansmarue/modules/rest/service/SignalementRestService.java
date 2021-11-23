@@ -2605,7 +2605,7 @@ public class SignalementRestService implements ISignalementRestService
 
         List<Signalement> listSignalement = _signalementService.getSignalementsByEmail( email, filterOnResolved );
         
-        if( StringUtils.endsWith( email, AppPropertiesService.getProperty( SignalementRestConstants.PROPERTY_EMAIL_AGENT_DOMAINE ) ) && filterOnResolved )
+        if( StringUtils.endsWith( email, AppPropertiesService.getProperty( SignalementRestConstants.PROPERTY_LIST_DOMAIN_EMAIL ) ) && filterOnResolved )
         {
             listSignalement.addAll( _signalementService.getSignalementsServiceFaitByEmailAgent( email ) );
         }

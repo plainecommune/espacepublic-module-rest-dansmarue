@@ -864,7 +864,7 @@ public final class SignalementRestConstants
     /** The Constant PROPERTY_ID_STATE_SERVICE_FAIT. */
     // STATUS
     public static final String PROPERTY_ID_STATE_SERVICE_FAIT = "signalement.idStateServiceFait";
-
+    
     /**
      * Constructor.
      */

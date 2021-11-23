@@ -2604,6 +2604,13 @@ public class SignalementRestService implements ISignalementRestService
                 .equals( jsonSrc.getString( SignalementRestConstants.JSON_TAG_FILTER_INCIDENT_STATUS ) );
 
         List<Signalement> listSignalement = _signalementService.getSignalementsByEmail( email, filterOnResolved );
+        
+        if( StringUtils.endsWithAny( email.toLowerCase( ), getEmailDomainAccept( ) ) && filterOnResolved )
+        {
+            listSignalement.addAll( _signalementService.getSignalementsServiceFaitByEmailAgent( email ) );
+        }
+          
+            
         List<SignalementRestDTO> listSignalementRestDTO = new ArrayList<>( );
         for ( Signalement signalement : listSignalement )
         {

@@ -2330,7 +2330,7 @@ public class SignalementRestService implements ISignalementRestService
         }
 
         // Si le signaleur n'est pas trouvé et que l'email ne finit pas par @paris.fr, remonte une erreur
-        if ( !signaleurFound && !StringUtils.endsWithAny( getIdentityStoreAttributeValue( guid, "email" ).toLowerCase( ), getEmailDomainAccept( ) ) )
+        if ( !signaleurFound && !StringUtils.endsWithAny( email.toLowerCase( ), getEmailDomainAccept( ) ) )
         {
             AppLogService.error( "signaleur not found and bad domain email !! " );
             ErrorSignalement error = new ErrorSignalement( );

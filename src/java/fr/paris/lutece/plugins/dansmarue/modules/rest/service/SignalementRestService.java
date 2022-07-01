@@ -2607,7 +2607,16 @@ public class SignalementRestService implements ISignalementRestService
 
         if( StringUtils.endsWithAny( email.toLowerCase( ), getEmailDomainAccept( ) ) && filterOnResolved )
         {
-            listSignalement.addAll( _signalementService.getSignalementsServiceFaitByEmailAgent( email ) );
+            List<Signalement> listSignalementDone = _signalementService.getSignalementsServiceFaitByEmailAgent( email );
+            for ( Signalement signalement : listSignalementDone )
+            {
+                boolean isSignalementInTheList = listSignalement.stream( ).filter( s -> s.getId( ).equals( signalement.getId( ) ) ).findFirst( ).orElse( null ) != null;
+
+                if ( !isSignalementInTheList )
+                {
+                    listSignalement.add( signalement );
+                }
+            }
         }
 
 

@@ -365,15 +365,29 @@ public interface ISignalementRestService
      * @return lis of action
      */
     Collection<Action> getListActionsByIdSignalementAndUser( int nIdSignalement, AdminUser user );
-    
+
     /**
      * Check if email is agent's one
-     * 
+     *
      * @param strRequest
      *      the json stream sended by request
      * @return the answer to request
-     *  
+     *
      */
     String checkMailAgent( JSONObject json );
+
+    /**
+     * Update the report by token with the informations from the satisfaction form
+     *
+     * @param strToken
+     *      the token of the report to update
+     * @param strChoix
+     *      the choice made by the user in the satisfaction form
+     * @param strCommentaire
+     *      the comment made by the user in the satisfaction form
+     * @return the answer to request
+     *
+     */
+    JSONObject updateSignalementByTokenWithSatisfactionFormAnswerAndComment( String strToken, String strChoix, String strCommentaire );
 
 }

@@ -55,26 +55,13 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.plugins.dansmarue.business.entities.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.sun.jersey.core.header.FormDataContentDisposition;
 
-import fr.paris.lutece.plugins.dansmarue.business.entities.Adresse;
-import fr.paris.lutece.plugins.dansmarue.business.entities.Arrondissement;
-import fr.paris.lutece.plugins.dansmarue.business.entities.MessageTypologie;
-import fr.paris.lutece.plugins.dansmarue.business.entities.NotificationSignalementUserMultiContents;
-import fr.paris.lutece.plugins.dansmarue.business.entities.ObservationRejet;
-import fr.paris.lutece.plugins.dansmarue.business.entities.Photo;
-import fr.paris.lutece.plugins.dansmarue.business.entities.PhotoDMR;
-import fr.paris.lutece.plugins.dansmarue.business.entities.Priorite;
-import fr.paris.lutece.plugins.dansmarue.business.entities.Signalement;
-import fr.paris.lutece.plugins.dansmarue.business.entities.SignalementGeoLoc;
-import fr.paris.lutece.plugins.dansmarue.business.entities.Signaleur;
-import fr.paris.lutece.plugins.dansmarue.business.entities.SiraUser;
-import fr.paris.lutece.plugins.dansmarue.business.entities.Source;
-import fr.paris.lutece.plugins.dansmarue.business.entities.TypeSignalement;
 import fr.paris.lutece.plugins.dansmarue.business.exceptions.AlreadyFollowedException;
 import fr.paris.lutece.plugins.dansmarue.business.exceptions.InvalidStateActionException;
 import fr.paris.lutece.plugins.dansmarue.business.exceptions.NonExistentFollowItem;
@@ -3272,5 +3259,34 @@ public class SignalementRestService implements ISignalementRestService
             error.setErrorMessage( e.getMessage( ) );
             return formatterJson.format( error );
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JSONObject updateSignalementByTokenWithSatisfactionFormAnswerAndComment( String strToken, String strChoix, String strCommentaire )
+    {
+        Signalement signalement = _signalementService.getSignalementByToken( strToken );
+        SatisfactionFeedback satisfactionFeedback = new SatisfactionFeedback( );
+        satisfactionFeedback.setIdSatisfactionFeedback( Integer.parseInt( strChoix ) );
+
+        signalement.setCommentaireFeedback( strCommentaire );
+        signalement.setSatisfactionFeedback( satisfactionFeedback );
+        signalement.setNombreFeedback( 1 );
+
+        try
+        {
+            _signalementService.update( signalement );
+        }
+        catch( Exception e )
+        {
+            AppLogService.error( e.getMessage( ), e );
+        }
+
+        JSONObject jObject = new JSONObject( );
+        jObject.put( SignalementConstants.RETOUR_SAVE_SATISFACTION_FORM_OK, true );
+        return jObject;
+
     }
 }

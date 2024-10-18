@@ -1624,11 +1624,21 @@ public class SignalementRest
             JSONObject object = new ObjectMapper( ).readValue( parameters, JSONObject.class );
             ObjectMapper mapper = new ObjectMapper( ).setVisibility( JsonMethod.FIELD, Visibility.ANY );
 
-            JSONArray array = (JSONArray) object.get( "listTypeSignalement" );
-            List<TypeSignalement> typeSignalement = mapper.readValue( array.toString( ),
-                    mapper.getTypeFactory( ).constructCollectionType( List.class, TypeSignalement.class ) );
-            _signalementRestService.getAllSousTypeSignalementCascade( (Integer) object.get( "typeSignalementId" ), typeSignalement );
-            return mapper.writeValueAsString( typeSignalement );
+            String strToken = object.containsKey( "token" )
+                    ? object.getString( "token" )
+                    : null;
+
+            String strChoix = object.containsKey( "choix" )
+                    ? object.getString( "choix" )
+                    : null;
+
+           String strCommentaire = object.containsKey( "commentaire" )
+                    ? object.getString( "commentaire" )
+                    : null;
+
+            JSONObject response = _signalementRestService.updateSignalementByTokenWithSatisfactionFormAnswerAndComment( strToken, strChoix, strCommentaire );
+
+            return response.toString( );
         }
         catch( IOException e )
         {

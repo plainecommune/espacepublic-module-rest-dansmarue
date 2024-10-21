@@ -3277,7 +3277,7 @@ public class SignalementRestService implements ISignalementRestService
 
         try
         {
-            _signalementService.update( signalement );
+            _signalementService.updateSatisfactionFormFields( signalement );
         }
         catch( Exception e )
         {

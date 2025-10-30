@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.dansmarue.modules.rest.service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -141,7 +142,6 @@ import net.sf.json.JSONSerializer;
  */
 public class SignalementRestService implements ISignalementRestService
 {
-
     /** The Constant PARAMETER_NULL. */
     private static final String PARAMETER_NULL = "null";
 
@@ -293,7 +293,7 @@ public class SignalementRestService implements ISignalementRestService
                                                 else
                                                     if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_CHANGE_STATUS ) )
                                                     {
-                                                        strRespons = changeStatus( json, request );
+                                                        strRespons = changeStatus( json, request, false );
                                                     }
                                                     else
                                                         if ( strRequestType.equals( SignalementRestConstants.REQUEST_TYPE_ADD_ANOMALIE ) )
@@ -1156,7 +1156,7 @@ public class SignalementRestService implements ISignalementRestService
      * {@inheritDoc}
      */
     @Override
-    public String changeStatus( JSONObject jsonSrc, HttpServletRequest request )
+    public String changeStatus( JSONObject jsonSrc, HttpServletRequest request, boolean controlToken )
     {
         JSONObject jsonObject = new JSONObject( );
         jsonObject.accumulate( SignalementRestConstants.JSON_TAG_REQUEST, SignalementRestConstants.REQUEST_TYPE_CHANGE_STATUS );
@@ -1187,6 +1187,14 @@ public class SignalementRestService implements ISignalementRestService
                     Signalement signalement;
 
                     signalement = _signalementService.getSignalement( id );
+
+                    if(controlToken && !isValidToken(request, signalement))
+                    {
+                        JSONObject jsonError = new JSONObject( );
+                        jsonError.accumulate( SignalementRestConstants.JSON_TAG_ERROR_ERROR, 401 );
+                        jsonError.accumulate( SignalementRestConstants.JSON_TAG_ERROR_MESSAGE, "Unauthorized" );
+                        return jsonError.toString( );
+                    }
 
                     if ( signalement == null )
                     {
@@ -3307,5 +3315,32 @@ public class SignalementRestService implements ISignalementRestService
         jObject.put( SignalementConstants.RETOUR_SAVE_SATISFACTION_FORM_OK, true );
         return jObject;
 
+    }
+
+    private boolean isValidToken(HttpServletRequest request, Signalement signalement) {
+
+        boolean result = false;
+
+        final String propertiesPrefix = "api.partenaire.token.";
+
+        final String authorizationHeaderValue = request.getHeader( "Authorization" );
+
+        if ( ( authorizationHeaderValue != null ) && authorizationHeaderValue.startsWith( "Bearer" ) )
+        {
+            final String token = authorizationHeaderValue.substring( 7, authorizationHeaderValue.length( ) );
+
+            if(StringUtils.isNotBlank( signalement.getTypeSignalement( ).getUnit( ).getLabel( )))
+            {
+                //remove spaces and accents from unit label
+                String cleanUnitLabel = Normalizer.normalize( signalement.getTypeSignalement( ).getUnit( ).getLabel( ).replace( ' ', '_' ).toLowerCase( ), Normalizer.Form.NFD ).replaceAll( "[\\p{InCombiningDiacriticalMarks}]", "" );
+
+                String referenceToken =  AppPropertiesService.getProperty( propertiesPrefix+cleanUnitLabel);
+
+                if(StringUtils.isNotBlank(referenceToken) && referenceToken.equals(token)) {
+                    result = true;
+                }
+            }
+        }
+        return result;
     }
 }

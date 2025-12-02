@@ -148,9 +148,11 @@ public interface ISignalementRestService
      *            json stream
      * @param request
      *            the http request
+     * @param controlToken
+     *            true to control token
      * @return json response
      */
-    String changeStatus( JSONObject jsonSrc, HttpServletRequest request );
+    String changeStatus( JSONObject jsonSrc, HttpServletRequest request, boolean controlToken );
 
     /**
      * This request is sent if the user need to change the incident category or the indent address.

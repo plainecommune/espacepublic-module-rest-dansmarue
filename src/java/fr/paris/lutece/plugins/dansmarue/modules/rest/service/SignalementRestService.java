@@ -1248,8 +1248,6 @@ public class SignalementRestService implements ISignalementRestService
 
                                     request.getSession( ).setAttribute( PARAMETER_WEBSERVICE_CHOSEN_MESSAGE, chosenMessage );
 
-                                    _manageSignalementService.manageStatusWithWorkflow( request, jsonObject, jsonAnswer, id, signalementreference, status, null,
-                                            motifRejetAutre, strDateProgrammee, idTypeAnomalie, comment, emailActeur );
 
                                     String photoSF = null;
                                     if ( answer.containsKey( SignalementRestConstants.JSON_TAG_INCIDENT_PHOTO ) )
@@ -1287,6 +1285,9 @@ public class SignalementRestService implements ISignalementRestService
                                         _photoService.insert( photo );
 
                                     }
+
+                                    _manageSignalementService.manageStatusWithWorkflow( request, jsonObject, jsonAnswer, id, signalementreference, status, null,
+                                            motifRejetAutre, strDateProgrammee, idTypeAnomalie, comment, emailActeur );
 
                                 }
 

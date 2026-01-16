@@ -8,7 +8,7 @@
   </parent>
   <groupId>fr.paris.lutece.plugins</groupId>
   <artifactId>module-bienvu-rest</artifactId>
-  <version>1.1.4-SNAPSHOT</version>
+  <version>1.2.x-SNAPSHOT</version>
   <packaging>lutece-plugin</packaging>
   <name>Lutece bien VU rest module</name>
   <url>https://github.com/bienVU-PCO/espacepublic-plugin-dansmarue</url>
